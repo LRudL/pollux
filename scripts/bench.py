@@ -58,7 +58,11 @@ def generate_with_openrouter(prompts: List[str], model_name: str) -> List[str]:
 def main():
     parser = argparse.ArgumentParser(description='Run benchmark with specified model')
     parser.add_argument('--model', type=str, default='latest',
-                      help='Model to use. Can be "latest", a local path, or an OpenRouter model name (e.g. "anthropic/claude-3.5-sonnet")')
+                      help='Model to use. Options:\n'
+                           '- "latest": Use the latest local model (default)\n'
+                           '- "path/to/model": Use a local model at the specified path\n'
+                           '- "provider/model-name": Use a HuggingFace model (e.g. "google/gemma-7b")\n'
+                           '- "openrouter/provider/model": Use an OpenRouter model (e.g. "openrouter/google/gemma-7b-it")')
     args = parser.parse_args()
 
     # Load questions
@@ -67,8 +71,8 @@ def main():
     # Extract prompts
     prompts = [q["content"] + "\n\nAnswer (in a few sentences):\n" for q in questions]
     
-    # Check if using OpenRouter model
-    if "/" in args.model and args.model != "latest":
+    # Check if using OpenRouter model (must start with "openrouter/")
+    if args.model.startswith("openrouter/"):
         print(f"\nUsing OpenRouter model: {args.model}")
         responses = generate_with_openrouter(prompts, args.model)
     else:

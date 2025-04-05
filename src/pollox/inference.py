@@ -16,7 +16,7 @@ def find_latest_model() -> str:
     outputs_dir = "/mfs1/u/max/pollox-max/outputs"
     if not os.path.exists(outputs_dir):
         logger.warning(f"Outputs directory {outputs_dir} does not exist, using default model path")
-        return "/mfs1/u/max/pollox-max/outputs/2025_04_05_21-31-50_fe9_model_for_rudolf/checkpoint_final"
+        return "/mfs1/u/max/pollox-max/outputs/2025_04_05_23-08-12_0a9_model_for_rudolf/checkpoint_final"
     
     # Get all directories in outputs
     dirs = [d for d in os.listdir(outputs_dir) if os.path.isdir(os.path.join(outputs_dir, d))]
@@ -26,7 +26,7 @@ def find_latest_model() -> str:
     
     if not timestamp_dirs:
         logger.warning("No timestamped model directories found, using default model path")
-        return "/mfs1/u/max/pollox-max/outputs/2025_04_05_21-31-50_fe9_model_for_rudolf/checkpoint_final"
+        return "/mfs1/u/max/pollox-max/outputs/2025_04_05_23-08-12_0a9_model_for_rudolf/checkpoint_final"
     
     # Sort by timestamp (newest first)
     latest_dir = sorted(timestamp_dirs, reverse=True)[0]

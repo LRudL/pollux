@@ -1,6 +1,8 @@
 import os
 import json
 import random
+import argparse
+import matplotlib.pyplot as plt
 from pathlib import Path
 from openai import OpenAI
 from dotenv import load_dotenv
@@ -10,6 +12,49 @@ import string
 
 # Load environment variables
 load_dotenv()
+
+def create_win_rate_graph(comparison_file):
+    """Create a bar chart of model win rates from comparison.json"""
+    with open(comparison_file, "r") as f:
+        comparison = json.load(f)
+    
+    # Extract model names and win rates
+    stats = comparison["statistics"]
+    models = []
+    win_rates = []
+    
+    for model, data in stats.items():
+        # Clean up model name by removing prefixes/suffixes
+        clean_name = model.replace("results_", "").replace(".json", "")
+        models.append(clean_name)
+        win_rates.append(data["percentage"])
+    
+    # Create bar chart
+    plt.figure(figsize=(12, 6))
+    bars = plt.bar(models, win_rates)
+    
+    # Customize the chart
+    plt.title("Model Win Rates (%)", pad=20)
+    plt.xlabel("Model")
+    plt.ylabel("Win Rate (%)")
+    plt.xticks(rotation=45, ha='right')
+    
+    # Add value labels on top of bars
+    for bar in bars:
+        height = bar.get_height()
+        plt.text(bar.get_x() + bar.get_width()/2., height,
+                f'{height:.1f}%',
+                ha='center', va='bottom')
+    
+    # Adjust layout to prevent label cutoff
+    plt.tight_layout()
+    
+    # Save the plot
+    output_dir = comparison_file.parent
+    plt.savefig(output_dir / "win_rates.png", format='png', bbox_inches='tight')
+    plt.close()
+    
+    print(f"Wrote graph to {output_dir / 'win_rates.png'}")
 
 # Initialize OpenRouter client
 client = OpenAI(
@@ -79,11 +124,26 @@ Answers:
     return sources[letter_to_idx[letter]], prompt, response
 
 def main():
+    # Parse command line arguments
+    parser = argparse.ArgumentParser(description='Run model evaluation or generate graphs')
+    parser.add_argument('-graph', action='store_true', help='Only generate graphs from existing comparison.json')
+    args = parser.parse_args()
+    
+    results_dir = Path("datasets/duncanbench")
+    comparison_file = results_dir / "comparison.json"
+    
+    # If -graph flag is set, only generate graphs
+    if args.graph:
+        if not comparison_file.exists():
+            print("Error: comparison.json not found. Run evaluation first.")
+            return
+        create_win_rate_graph(comparison_file)
+        return
+    
     # Load questions and expert answers
     questions = load_questions()
     
     # Get all results files
-    results_dir = Path("datasets/duncanbench")
     results_files = list(results_dir.glob("results_*.json"))
     
     # Initialize statistics with all possible sources
@@ -137,11 +197,13 @@ def main():
         "judgements": judgements
     }
     
-    output_file = results_dir / "comparison.json"
-    with open(output_file, "w") as f:
+    with open(comparison_file, "w") as f:
         json.dump(comparison, f, indent=2)
     
-    print(f"Wrote out to {output_file}")
+    print(f"Wrote out to {comparison_file}")
+    
+    # Generate graphs
+    create_win_rate_graph(comparison_file)
 
 if __name__ == "__main__":
     main()
