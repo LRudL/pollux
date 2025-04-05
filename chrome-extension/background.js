@@ -8,7 +8,7 @@ const OPENROUTER_API_KEY = "sk-or-v1-b2c1c04e8a2ea922450ef75d031fc8a6a9a570d825d
 
 // Constants for API configuration
 const USE_LOCAL_API = true; // Set to true to use local API, false for OpenRouter
-const LOCAL_MODEL_PATH = '/mfs1/u/max/pollox-max/outputs/2025_04_05_21-54-41_fe9_model_for_rudolf/checkpoint_final';
+const LOCAL_MODEL_PATH = '/mfs1/u/max/pollox-max/outputs/2025_04_05_23-08-12_0a9_model_for_rudolf/checkpoint_final';
 const OPENROUTER_MODEL = 'openai/gpt-4o';
 
 // API URLs
@@ -81,12 +81,54 @@ function formatLocalCompletionsRequest(messages) {
  * @returns {string} - Extracted response text
  */
 function parseAPIResponse(data, isLocalAPI) {
-  if (isLocalAPI) {
-    // Local completions API format
-    return data.choices[0].text.trim();
-  } else {
-    // OpenRouter chat API format
-    return data.choices[0].message.content;
+  try {
+    let responseText;
+    
+    if (isLocalAPI) {
+      // Local completions API format
+      if (!data.choices || data.choices.length === 0) {
+        console.error('DunClone: Invalid response from local API:', data);
+        return "Error: Invalid response from API. No choices returned.";
+      }
+      
+      responseText = data.choices[0].text.trim();
+    } else {
+      // OpenRouter chat API format
+      if (!data.choices || data.choices.length === 0 || !data.choices[0].message) {
+        console.error('DunClone: Invalid response from OpenRouter API:', data);
+        return "Error: Invalid response from API. No message returned.";
+      }
+      
+      responseText = data.choices[0].message.content;
+    }
+    
+    // Check if the model indicated it couldn't understand or process the content
+    const errorIndicators = [
+      "I apologize, but I don't see any content to analyze",
+      "I don't have enough information",
+      "I cannot access the content",
+      "no content was provided",
+      "unable to analyze the provided content"
+    ];
+    
+    const hasError = errorIndicators.some(indicator => 
+      responseText.toLowerCase().includes(indicator.toLowerCase())
+    );
+    
+    if (hasError) {
+      console.warn('DunClone: Model indicated it could not process the content:', responseText);
+      responseText = `**Note: The model had difficulty analyzing the webpage content.**
+
+${responseText}
+
+**Additional Information:** 
+If you're seeing this message, it means the model may not have received the full webpage content or had trouble processing it. You can try refreshing the page or selecting a different section of content.`;
+    }
+    
+    return responseText;
+  } catch (error) {
+    console.error('DunClone: Error parsing API response:', error);
+    return "Error parsing the response from the AI model.";
   }
 }
 
@@ -102,15 +144,73 @@ async function callLLM(objective, content) {
     // Store the objective for context in future chat
     lastObjective = objective;
     
+    // Limit content length to prevent token overflow
+    // Approximate tokens: ~3-4 chars per token, aim for ~3000 tokens max for content
+    const MAX_CONTENT_LENGTH = 12000;
+    let trimmedContent = content;
+    
+    if (content.length > MAX_CONTENT_LENGTH) {
+      console.log(`DunClone: Trimming content from ${content.length} to ${MAX_CONTENT_LENGTH} characters`);
+      
+      // Instead of simple truncation, try to keep meaningful sections
+      // First split by paragraph
+      const paragraphs = content.split('\n\n');
+      
+      if (paragraphs.length > 1) {
+        // Keep the beginning (title, metadata)
+        let currentLength = 0;
+        const importantParts = [];
+        
+        // Always include first few paragraphs which likely contain metadata
+        for (let i = 0; i < Math.min(3, paragraphs.length); i++) {
+          importantParts.push(paragraphs[i]);
+          currentLength += paragraphs[i].length + 4; // +4 for '\n\n'
+        }
+        
+        // Try to include any headings and their content, prioritizing h1, h2, h3
+        const headingParagraphs = paragraphs.filter(p => 
+          p.includes('H1:') || p.includes('H2:') || p.includes('H3:')
+        ).slice(0, 10); // Limit to 10 major headings
+        
+        for (const p of headingParagraphs) {
+          if (currentLength + p.length < MAX_CONTENT_LENGTH * 0.7) {
+            importantParts.push(p);
+            currentLength += p.length + 4;
+          }
+        }
+        
+        // Add more content until we reach the limit
+        for (let i = 3; i < paragraphs.length; i++) {
+          // Skip paragraphs we've already added from headings
+          if (headingParagraphs.includes(paragraphs[i])) continue;
+          
+          // Check if adding this paragraph would exceed our limit
+          if (currentLength + paragraphs[i].length > MAX_CONTENT_LENGTH) {
+            // If we're getting close to the limit, add a note about truncation
+            importantParts.push('... (content truncated due to length) ...');
+            break;
+          }
+          
+          importantParts.push(paragraphs[i]);
+          currentLength += paragraphs[i].length + 4;
+        }
+        
+        trimmedContent = importantParts.join('\n\n');
+      } else {
+        // Simple truncation if we can't split by paragraphs
+        trimmedContent = content.substring(0, MAX_CONTENT_LENGTH) + '... (content truncated)';
+      }
+    }
+    
     const prompt = `
-    You are DunClone, a Cambridge economics professor's digital clone helping analyze content from a webpage.
+    You are DunClone, a digital clone of a 19-year old economics prodigy helping analyze content from a webpage.
 
     User's Research Objective: ${objective}
 
     The user has navigated to a webpage with economics-related content. Analyze this content and provide insightful economic analysis. The content might be lengthy, so focus on the most relevant economics information.
 
     Content from Webpage:
-    ${content}
+    ${trimmedContent}
 
     Please provide your analysis using the following format:
     1. **Concise Summary of the Key Economic Points**
@@ -134,7 +234,7 @@ async function callLLM(objective, content) {
 
     // Clear conversation history at the start of a new analysis
     conversationHistory = [
-      { role: 'system', content: 'You are DunClone, a Cambridge economics professor\'s digital clone. You speak in a professional but warm academic tone and have deep expertise in economics.' },
+      { role: 'system', content: 'You are DunClone, a digital clone of a 19-year old economics prodigy helping analyze content from a webpage. You speak in a professional but warm academic tone and have deep expertise in economics.' },
       { role: 'user', content: prompt }
     ];
 
@@ -151,7 +251,7 @@ async function callLLM(objective, content) {
     }
 
     console.log(`Making API request to: ${apiUrl}`);
-    console.log('Request body:', requestBody);
+    console.log('Request body size:', JSON.stringify(requestBody).length);
 
     const response = await fetch(apiUrl, {
       method: 'POST',
@@ -198,7 +298,7 @@ async function handleChatMessage(message) {
     if (conversationHistory.length === 2 && lastAnalysisContent) {
       conversationHistory.push({ 
         role: 'system', 
-        content: `Remember that you just analyzed some economics content with the objective: "${lastObjective}". Your last analysis was about: "${lastAnalysisContent.substring(0, 300)}...". The user's questions will be about this content and your analysis.` 
+        content: `Remember that you just analyzed some economics content with the objective: "${lastObjective}". Your last analysis was about: "${lastAnalysisContent.substring(0, 300)}...". The user's questions will be about this content and your analysis. If asked about something outside of the webpage, please use your knowledge to evaluate the question. Do not refuse to answer just because it is not in the text.` 
       });
     }
     

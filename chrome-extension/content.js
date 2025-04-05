@@ -76,18 +76,130 @@ function checkForEconomicsContent() {
 }
 
 /**
- * Extracts all text content from the page
+ * Extracts content from the page
  * @returns {string} - Extracted text
  */
 function extractPageContent() {
   try {
-    // Get all text from the page
-    const bodyText = document.body.innerText;
-    return bodyText;
+    debug('Extracting page content');
+    
+    let content = [];
+    
+    // Get page metadata
+    content.push(`Title: ${document.title || 'No title'}`);
+    
+    // Get meta description if available
+    const metaDescription = document.querySelector('meta[name="description"]');
+    if (metaDescription && metaDescription.content) {
+      content.push(`Description: ${metaDescription.content}`);
+    }
+    
+    // Extract main content
+    content.push('\nMain Content:');
+    
+    // Try to get content from main element first
+    const mainElement = document.querySelector('main') || document.querySelector('article');
+    
+    if (mainElement) {
+      // If we have a main content area, prioritize that
+      debug('Found main content area, extracting text');
+      content.push(extractTextWithStructure(mainElement));
+    } else {
+      // Otherwise, extract from body with more structure
+      debug('No main content area found, extracting from body');
+      
+      // Get all headings to understand document structure
+      const headings = document.querySelectorAll('h1, h2, h3, h4, h5, h6');
+      if (headings.length > 0) {
+        content.push('Document Structure:');
+        headings.forEach(heading => {
+          content.push(`${heading.tagName}: ${heading.textContent.trim()}`);
+        });
+        content.push('\n');
+      }
+      
+      // Get paragraphs for main content
+      const paragraphs = document.querySelectorAll('p');
+      if (paragraphs.length > 0) {
+        content.push('Content:');
+        paragraphs.forEach(p => {
+          const text = p.textContent.trim();
+          if (text.length > 20) { // Only include substantial paragraphs
+            content.push(text);
+          }
+        });
+      } else {
+        // Fallback to body text
+        content.push(document.body.innerText);
+      }
+    }
+    
+    // Join content with newlines and return
+    return content.join('\n\n');
   } catch (error) {
     console.error('DunClone: Error extracting page content:', error);
-    return 'Error extracting content from page.';
+    // Fallback to simple method in case of error
+    return document.body.innerText || 'Error extracting content from page.';
   }
+}
+
+/**
+ * Helper function to extract text with structural hierarchy
+ * @param {Element} element - The element to extract text from
+ * @returns {string} - Structured text
+ */
+function extractTextWithStructure(element) {
+  const result = [];
+  
+  // Process child nodes
+  for (const child of element.childNodes) {
+    // Text node
+    if (child.nodeType === Node.TEXT_NODE) {
+      const text = child.textContent.trim();
+      if (text) result.push(text);
+    } 
+    // Element node
+    else if (child.nodeType === Node.ELEMENT_NODE) {
+      // Skip hidden elements
+      if (child.offsetParent === null && child.tagName !== 'META') continue;
+      
+      // Skip script, style, etc.
+      if (['SCRIPT', 'STYLE', 'NOSCRIPT', 'IFRAME', 'OBJECT'].includes(child.tagName)) {
+        continue;
+      }
+      
+      // Handle heading elements with special formatting
+      if (/^H[1-6]$/.test(child.tagName)) {
+        result.push(`\n${child.tagName}: ${child.textContent.trim()}`);
+      }
+      // Handle paragraph elements
+      else if (child.tagName === 'P') {
+        result.push(child.textContent.trim());
+      }
+      // Handle lists
+      else if (child.tagName === 'UL' || child.tagName === 'OL') {
+        const items = Array.from(child.querySelectorAll('li')).map(li => 
+          `• ${li.textContent.trim()}`
+        );
+        result.push(items.join('\n'));
+      }
+      // Handle tables by extracting text from cells
+      else if (child.tagName === 'TABLE') {
+        const tableText = Array.from(child.querySelectorAll('th, td'))
+          .map(cell => cell.textContent.trim())
+          .filter(text => text)
+          .join(' | ');
+        if (tableText) result.push(`Table: ${tableText}`);
+      }
+      // Recursively process other elements
+      else {
+        const structuredText = extractTextWithStructure(child);
+        if (structuredText) result.push(structuredText);
+      }
+    }
+  }
+  
+  return result.join('\n');
 }
 
 /**
@@ -454,6 +566,17 @@ function requestAnalysis(objective, content) {
   debug('Requesting analysis from background script');
   
   try {
+    // Update UI to show content is being processed
+    const analysisEl = document.getElementById('analysis-content');
+    if (analysisEl) {
+      // Show content size to debug extraction issues
+      const contentSize = (content.length / 1024).toFixed(1);
+      analysisEl.innerHTML = `<div class="loading">Analyzing economics content (${contentSize}KB extracted)</div>`;
+    }
+    
+    // Log content size for debugging
+    debug(`Extracted content size: ${content.length} characters`);
+    
     chrome.runtime.sendMessage({
       type: 'ANALYZE_CONTENT',
       data: {
@@ -463,13 +586,17 @@ function requestAnalysis(objective, content) {
     }, function(response) {
       if (chrome.runtime.lastError) {
         console.error('DunClone: Runtime error:', chrome.runtime.lastError);
+        if (analysisEl) {
+          analysisEl.innerHTML = `<div class="error-message"><span class="icon">⚠️</span> Error: ${chrome.runtime.lastError.message}</div>`;
+          analysisEl.classList.remove('loading');
+          analysisEl.classList.add('error');
+        }
         return;
       }
       
       debug('Received analysis response');
       
       // Update the analysis content when we get a response
-      const analysisEl = document.getElementById('analysis-content');
       if (analysisEl) {
         if (response && response.analysis) {
           // Format the analysis content with proper HTML structure
@@ -487,6 +614,14 @@ function requestAnalysis(objective, content) {
     });
   } catch (error) {
     console.error('DunClone: Error in requestAnalysis:', error);
+    
+    // Update UI with the error
+    const analysisEl = document.getElementById('analysis-content');
+    if (analysisEl) {
+      analysisEl.innerHTML = `<div class="error-message"><span class="icon">⚠️</span> Error: ${error.message}</div>`;
+      analysisEl.classList.remove('loading');
+      analysisEl.classList.add('error');
+    }
   }
 }
 
