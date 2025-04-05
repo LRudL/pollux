@@ -2,7 +2,7 @@
 
 This is a repository for creating a digital twin of a person given their data, named after Pollux the immortal twin in Greek mythology.
 
-To demonstrate out capability we trained a model off of the entire written corpus of Duncan McClements, a 19 year old economics prodigy whose work is already being used by the UK government. We’ve worked with Duncan extensively on economics research, so we know his output style and context. We also designed DuncanBench, a 10-question benchmark designed to see if the model answered questions in Duncan’s style and with his takes.
+To demonstrate out capability we trained a model off of the entire written corpus of Duncan McClements, a 19 year old economics prodigy whose work is already being used by the UK government. We’ve worked with Duncan extensively on economics research, so we know his output style and context. We also designed DuncanBench, a 10-question benchmark designed to see if the model answered questions in Duncan’s style and with his takes, and evaluated Duncan versus DunClone versus the un-finetuned model.
 
 ![image](https://github.com/user-attachments/assets/711bc44c-e544-442a-9fe5-de7ecb9a0a8c)
 
