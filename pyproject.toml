@@ -17,6 +17,7 @@ dependencies = [
     "transformers>=4.50.3",
     "peft>=0.15.1",
     "vllm>=0.8.2",
+    "gradio>=5.23.3",
 ]
 
 [build-system]

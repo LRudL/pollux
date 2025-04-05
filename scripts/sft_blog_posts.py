@@ -229,7 +229,7 @@ def get_model_tokenizer_config(
         task_type="CAUSAL_LM",
     )
     model = get_peft_model(model,lora_config)
-    tokenizer = AutoTokenizer.from_pretrained(args.model_name)  # type: ignore
+    tokenizer = AutoTokenizer.from_pretrained("google/gemma-7b-it")  # type: ignore
     tokenizer.pad_side = args.pad_side
 
     return model, tokenizer, config  # type: ignore

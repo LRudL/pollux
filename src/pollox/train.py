@@ -249,6 +249,7 @@ def train(
 
     if experiment_output_dir is not None and save_final_checkpoint:
         print("Saving final model...")
+        model = model.merge_and_unload()
         final_checkpoint = save_model_checkpoint(
             model, "checkpoint_final", experiment_output_dir=experiment_output_dir
         )
