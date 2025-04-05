@@ -15,7 +15,6 @@ from tqdm import tqdm
 import time
 from logging import getLogger
 from collections import defaultdict
-from pollox.train
 logger = getLogger(__name__)
 
 

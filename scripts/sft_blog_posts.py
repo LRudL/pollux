@@ -30,7 +30,7 @@ from datasets import Dataset, load_from_disk
 from datasets import concatenate_datasets as hf_concatenate_datasets
 from pollox.train import train
 from pollox.logging import log
-from pollox.utils import hash_str,
+from pollox.utils import hash_str
 
 logger = logging.getLogger(__name__)
 
