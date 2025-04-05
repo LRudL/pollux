@@ -6,8 +6,15 @@ readme = "README.md"
 requires-python = ">=3.12"
 dependencies = [
     "datasets>=3.5.0",
+    "debugpy>=1.8.13",
     "jsonlines>=4.0.0",
     "openai>=1.70.0",
     "pip>=25.0.1",
+    "pydantic-settings>=2.8.1",
+    "torch>=2.6.0",
     "transformers>=4.50.3",
 ]
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
