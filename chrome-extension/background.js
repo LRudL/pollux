@@ -6,13 +6,25 @@
 // API key for OpenRouter
 const OPENROUTER_API_KEY = "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";
 
-// Constants for OpenRouter API
+// Constants for API configuration
+const USE_LOCAL_API = true; // Set to true to use local API, false for OpenRouter
+const LOCAL_MODEL_PATH = '/mfs1/u/max/pollox-max/outputs/2025_04_05_21-54-41_fe9_model_for_rudolf/checkpoint_final';
+const OPENROUTER_MODEL = 'openai/gpt-4o';
+
+// API URLs
+const LOCAL_API_URL = 'http://localhost:8000/v1';
 const OPENROUTER_BASE_URL = 'https://openrouter.ai/api/v1';
-const DEFAULT_HEADERS = {
+
+// Headers
+const OPENROUTER_HEADERS = {
   'Content-Type': 'application/json',
   'Authorization': `Bearer ${OPENROUTER_API_KEY}`,
   'HTTP-Referer': 'chrome-extension://dunclone',
   'X-Title': 'DunClone'
+};
+
+const LOCAL_API_HEADERS = {
+  'Content-Type': 'application/json'
 };
 
 // Store conversation history
@@ -21,7 +33,65 @@ let lastAnalysisContent = '';
 let lastObjective = '';
 
 /**
- * Sends a request to the OpenRouter API with the LLM prompt
+ * Formats the chat messages for OpenRouter API
+ * @param {Array} messages - Array of message objects with role and content
+ * @returns {Object} - Formatted request body
+ */
+function formatOpenRouterRequest(messages) {
+  return {
+    model: OPENROUTER_MODEL,
+    messages: messages
+  };
+}
+
+/**
+ * Formats messages for local completions API
+ * @param {Array} messages - Array of message objects with role and content
+ * @returns {Object} - Formatted request body for completions API
+ */
+function formatLocalCompletionsRequest(messages) {
+  // Convert chat messages to a single prompt string
+  let promptText = "";
+  
+  messages.forEach(msg => {
+    if (msg.role === 'system') {
+      promptText += `System: ${msg.content}\n\n`;
+    } else if (msg.role === 'user') {
+      promptText += `User: ${msg.content}\n\n`;
+    } else if (msg.role === 'assistant') {
+      promptText += `Assistant: ${msg.content}\n\n`;
+    }
+  });
+  
+  // Add final prompt for assistant to continue
+  promptText += "Assistant:";
+  
+  return {
+    model: LOCAL_MODEL_PATH,
+    prompt: promptText,
+    max_tokens: 1000,
+    temperature: 0.7
+  };
+}
+
+/**
+ * Parses the response from either API format
+ * @param {Object} data - Response data from API
+ * @param {boolean} isLocalAPI - Whether using local API
+ * @returns {string} - Extracted response text
+ */
+function parseAPIResponse(data, isLocalAPI) {
+  if (isLocalAPI) {
+    // Local completions API format
+    return data.choices[0].text.trim();
+  } else {
+    // OpenRouter chat API format
+    return data.choices[0].message.content;
+  }
+}
+
+/**
+ * Sends a request to the appropriate API with the LLM prompt
  * 
  * @param {string} objective - The research objective
  * @param {string} content - The content to analyze
@@ -68,13 +138,25 @@ async function callLLM(objective, content) {
       { role: 'user', content: prompt }
     ];
 
-    const response = await fetch(`${OPENROUTER_BASE_URL}/chat/completions`, {
+    let apiUrl, headers, requestBody;
+    
+    if (USE_LOCAL_API) {
+      apiUrl = `${LOCAL_API_URL}/completions`;
+      headers = LOCAL_API_HEADERS;
+      requestBody = formatLocalCompletionsRequest(conversationHistory);
+    } else {
+      apiUrl = `${OPENROUTER_BASE_URL}/chat/completions`;
+      headers = OPENROUTER_HEADERS;
+      requestBody = formatOpenRouterRequest(conversationHistory);
+    }
+
+    console.log(`Making API request to: ${apiUrl}`);
+    console.log('Request body:', requestBody);
+
+    const response = await fetch(apiUrl, {
       method: 'POST',
-      headers: DEFAULT_HEADERS,
-      body: JSON.stringify({
-        model: 'openai/gpt-4o',
-        messages: conversationHistory
-      })
+      headers: headers,
+      body: JSON.stringify(requestBody)
     });
 
     if (!response.ok) {
@@ -84,7 +166,7 @@ async function callLLM(objective, content) {
     }
 
     const data = await response.json();
-    const analysisContent = data.choices[0].message.content;
+    const analysisContent = parseAPIResponse(data, USE_LOCAL_API);
     
     // Store the analysis for context in future chat
     lastAnalysisContent = analysisContent;
@@ -123,13 +205,25 @@ async function handleChatMessage(message) {
     // Add user message to conversation history
     conversationHistory.push({ role: 'user', content: message });
     
-    const response = await fetch(`${OPENROUTER_BASE_URL}/chat/completions`, {
+    let apiUrl, headers, requestBody;
+    
+    if (USE_LOCAL_API) {
+      apiUrl = `${LOCAL_API_URL}/completions`;
+      headers = LOCAL_API_HEADERS;
+      requestBody = formatLocalCompletionsRequest(conversationHistory);
+    } else {
+      apiUrl = `${OPENROUTER_BASE_URL}/chat/completions`;
+      headers = OPENROUTER_HEADERS;
+      requestBody = formatOpenRouterRequest(conversationHistory);
+    }
+
+    console.log(`Making API request to: ${apiUrl}`);
+    console.log('Request body:', requestBody);
+
+    const response = await fetch(apiUrl, {
       method: 'POST',
-      headers: DEFAULT_HEADERS,
-      body: JSON.stringify({
-        model: 'openai/gpt-4o',
-        messages: conversationHistory
-      })
+      headers: headers,
+      body: JSON.stringify(requestBody)
     });
 
     if (!response.ok) {
@@ -139,7 +233,7 @@ async function handleChatMessage(message) {
     }
 
     const data = await response.json();
-    const responseContent = data.choices[0].message.content;
+    const responseContent = parseAPIResponse(data, USE_LOCAL_API);
     
     // Add the assistant response to conversation history
     conversationHistory.push({ role: 'assistant', content: responseContent });
