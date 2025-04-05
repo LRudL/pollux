@@ -34,12 +34,12 @@ def main():
     questions = load_questions()
     
     # Extract prompts
-    prompts = [q["content"] for q in questions]
+    prompts = [q["content"] + "\n\nAnswer (in a few sentences):\n" for q in questions]
     
     # Configure generation
     config = GenerationConfig(
         max_length=512,
-        temperature=0.7,
+        temperature=1.0,
         do_sample=True
     )
     
