@@ -11,7 +11,7 @@ body, html {
 #econ-sidebar {
   width: 100%;
   height: 100vh;
-  background-color: #f8f9fa;
+  background-color: #FFFFFF; /* Set overall sidebar background to white */
   display: flex;
   flex-direction: column;
   overflow: hidden;
@@ -19,7 +19,7 @@ body, html {
 }
 
 .sidebar-header {
-  background-color: #0072cf; /* Cambridge Blue */
+  background-color: #A3C1AD; /* Cambridge Blue */
   color: white;
   padding: 15px;
   display: flex;
@@ -54,36 +54,11 @@ body, html {
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
 }
 
-.close-button {
-  position: absolute;
-  left: -24px;
-  top: 50%;
-  transform: translateY(-50%);
-  background-color: #dc3545;
-  color: white;
-  border: none;
-  width: 24px;
-  height: 48px;
-  font-size: 16px;
-  cursor: pointer;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  border-radius: 4px 0 0 4px;
-  box-shadow: -2px 0 5px rgba(0, 0, 0, 0.2);
-  transition: background-color 0.2s, width 0.2s;
-  z-index: 1;
-}
-
-.close-button:hover {
-  background-color: #bd2130;
-  width: 28px;
-}
-
 .sidebar-content {
   padding: 20px;
   overflow-y: auto;
   flex-grow: 1;
+  background-color: #FFFFFF; /* Ensure content background is white */
   height: calc(100vh - 66px); /* Ensure content area fills remaining height */
   box-sizing: border-box;
 }

@@ -3,7 +3,7 @@
   position: fixed;
   right: 20px;
   top: 20px;
-  background-color: #0072cf; /* Cambridge Blue */
+  background-color: #A3C1AD; /* Cambridge Blue */
   color: white;
   border: none;
   border-radius: 50%;
@@ -18,18 +18,20 @@
   justify-content: center;
   box-shadow: 0 3px 8px rgba(0, 0, 0, 0.2);
   transition: all 0.3s ease;
-  opacity: 0;
-  animation: fadeIn 0.5s ease-in-out forwards;
+  opacity: 0; /* Restore initial opacity for fade-in */
+  animation: fadeIn 0.5s ease-in-out forwards; /* Restore fade-in animation */
   user-select: none; /* Prevent text selection */
   -webkit-tap-highlight-color: transparent; /* Remove tap highlight on mobile */
 }
 
 #econ-trigger:hover {
+  background-color: #87a893; /* Slightly darker Cambridge Blue for hover */
   transform: scale(1.1);
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
 }
 
 #econ-trigger:active {
+  background-color: #759281; /* Even darker Cambridge Blue for active */
   transform: scale(0.95);
 }
 
@@ -39,13 +41,12 @@
   right: -400px; /* Start off-screen */
   width: 380px;
   height: 100vh;
-  background-color: #f8f9fa;
+  background-color: #f8f9fa; /* Keep sidebar background light */
   box-shadow: -2px 0 15px rgba(0, 0, 0, 0.2);
   z-index: 10000 !important; /* Super high z-index */
   font-family: 'Bookman Old Style', Garamond, 'Times New Roman', serif;
   display: flex;
   flex-direction: column;
-  overflow: hidden;
   border-left: 1px solid #e1e4e8;
   position: relative;
   pointer-events: auto; /* Ensure it captures events */
@@ -70,30 +71,32 @@
 
 .close-button {
   position: absolute;
-  left: -24px;
+  left: -32px; /* Position outside sidebar */
   top: 50%;
   transform: translateY(-50%);
-  background-color: #dc3545;
+  background-color: #dc3545; /* Change to red */
   color: white;
   border: none;
-  width: 24px;
-  height: 48px;
-  font-size: 16px;
+  width: 32px;
+  height: 60px;
+  font-size: 20px;
   cursor: pointer;
   display: flex;
   align-items: center;
   justify-content: center;
-  border-radius: 4px 0 0 4px;
-  box-shadow: -2px 0 5px rgba(0, 0, 0, 0.2);
-  transition: background-color 0.2s, width 0.2s;
-  z-index: 10001 !important; /* Higher than sidebar */
-  user-select: none; /* Prevent text selection */
-  -webkit-tap-highlight-color: transparent; /* Remove tap highlight on mobile */
+  border-radius: 6px 0 0 6px;
+  box-shadow: -2px 0 8px rgba(0, 0, 0, 0.4); /* Stronger shadow */
+  z-index: 100000 !important; /* Very high z-index */
+  opacity: 1 !important; /* Force visibility */
+  outline: 2px solid #fff; /* White outline for visibility */
+  user-select: none;
+  visibility: visible !important; /* Force visibility */
+  -webkit-tap-highlight-color: transparent;
 }
 
 .close-button:hover {
-  background-color: #bd2130;
-  width: 28px;
+  background-color: #bd2130; /* Darker red for hover */
+  width: 36px;
 }
 
 .close-button:active {
@@ -107,19 +110,30 @@
   display: inline-block;
 }
 
-/* Hide sidebar content during animation */
+/* Hide sidebar content during animation - BUT NOT THE CLOSE BUTTON */
 #econ-sidebar.animating .sidebar-content,
-#econ-sidebar.animating .sidebar-header,
-#econ-sidebar.animating .close-button {
+#econ-sidebar.animating .sidebar-header {
   opacity: 0;
   transition: opacity 0.2s ease;
 }
 
+/* Override any potential hiding of the close button */
+#econ-sidebar.animating .close-button {
+  opacity: 1 !important;
+  visibility: visible !important;
+}
+
 #econ-sidebar.active .sidebar-content,
-#econ-sidebar.active .sidebar-header,
-#econ-sidebar.active .close-button {
+#econ-sidebar.active .sidebar-header { 
   opacity: 1;
   transition: opacity 0.3s ease 0.2s;
+}
+
+/* Always keep close button visible */
+#econ-sidebar .close-button,
+#econ-sidebar.active .close-button {
+  opacity: 1 !important;
+  visibility: visible !important;
 }
 
 /* Ensure the sidebar content is scrollable */
@@ -319,12 +333,6 @@
 #econ-sidebar .loading:after {
   content: "...";
   animation: loading-dots 1.5s infinite;
-}
-
-/* For debugging - highlight elements with !important */
-.debug-highlight {
-  border: 3px solid red !important;
-  background-color: rgba(255, 0, 0, 0.1) !important;
 }
 
 @keyframes loading-dots {

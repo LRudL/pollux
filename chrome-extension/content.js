@@ -132,16 +132,9 @@ function injectTriggerButton() {
     triggerButton.textContent = 'D'; // Using simple text for reliability
     triggerButton.title = 'Ask DunClone';
     
-    // ADD DEBUGGING CLASS TO HIGHLIGHT THE BUTTON
-    if (debugMode) {
-      triggerButton.classList.add('debug-highlight');
-    }
-    
     // Add click event with debug logging and error handling
     triggerButton.onclick = function(e) {
       debug('🔴 Trigger button clicked via onclick');
-      // Show an alert for debugging
-      if (debugMode) alert('DunClone button clicked!');
       
       try {
         // Store button position for animation origin
@@ -181,12 +174,6 @@ function injectTriggerButton() {
       document.addEventListener('click', () => {
         debug('Document click detected - checking if propagation is properly stopped');
       });
-      
-      // Testing click after a delay
-      setTimeout(() => {
-        debug('Attempting to programmatically click the button for testing');
-        triggerButton.click();
-      }, 5000);
     }
   } catch (error) {
     console.error('DunClone: Error injecting trigger button:', error);
@@ -224,11 +211,6 @@ async function injectSidebar() {
     sidebar.style.overflow = 'hidden';
     sidebar.style.backgroundColor = '#0072cf'; // Match button color during animation
     sidebar.style.zIndex = '10000'; // Ensure high z-index
-    
-    // ADD DEBUGGING CLASS TO HIGHLIGHT THE SIDEBAR
-    if (debugMode) {
-      sidebar.classList.add('debug-highlight');
-    }
     
     // Create sidebar content with simple HTML structure
     sidebar.innerHTML = `
@@ -344,6 +326,13 @@ function expandFromButton(sidebar) {
       return;
     }
     
+    // Get the close button and ensure it's visible
+    const closeButton = sidebar.querySelector('.close-button');
+    if (closeButton) {
+      closeButton.style.opacity = '1';
+      closeButton.style.visibility = 'visible';
+    }
+    
     // First add a class to begin the transition
     sidebar.classList.add('animating');
     
@@ -380,6 +369,12 @@ function expandFromButton(sidebar) {
       sidebar.style.backgroundColor = '';
       
       debug('Sidebar expansion complete');
+      
+      // Ensure close button is visible
+      if (closeButton) {
+        closeButton.style.opacity = '1';
+        closeButton.style.visibility = 'visible';
+      }
     }, 500); // Match transition duration
   } catch (error) {
     console.error('DunClone: Error in expandFromButton:', error);
