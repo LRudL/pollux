@@ -2,7 +2,8 @@ import json
 import os
 from pathlib import Path
 from typing import List, Dict, Any
-
+from pollox.utils import tokenize
+from transformers import AutoTokenizer
 from datasets import Dataset
 
 # Define the directory to save the dataset
@@ -18,9 +19,11 @@ data = {
     "prompt": prompts,
     "completion": completions,
 }
+tokenizer = AutoTokenizer.from_pretrained("google/gemma-7b")
 
 # Create a Hugging Face dataset
 dataset = Dataset.from_dict(data)
+dataset = dataset.map(lambda x: tokenize(x, tokenizer, mask_out_prompt=False))
 
 # Save the dataset to disk
 dataset.save_to_disk(fake_data_dir / "fake_dataset")

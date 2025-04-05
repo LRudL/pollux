@@ -23,7 +23,27 @@ import torch.nn as nn
 from functools import wraps
 from datetime import timedelta
 from typing import Literal, ParamSpec
+from typing import Any
+from collections.abc import Callable
+from transformers import PreTrainedTokenizer, PreTrainedTokenizerFast
+from datasets import Dataset, DatasetDict
+import torch
+from pathlib import Path
+import json
+import inspect
+import logging
+import os
+import sys
+def remove_underscores_from_sys_argv() -> None:
+    found_underscore = False
+    for arg in sys.argv[1:]:
+        if arg.startswith("--"):
+            if "_" in arg:
+                found_underscore = True
+                sys.argv[sys.argv.index(arg)] = arg.replace("_", "-")
 
+    if found_underscore:
+        print("Found argument with '_', replaced with '-'")
 
 def get_root_of_git_repo(path: Path | str = ".") -> str:
     """
@@ -263,17 +283,7 @@ def get_args_and_kwargs_dict(
     )
     return args_as_kwargs | kwargs
 
-from typing import Any
-from collections.abc import Callable
-from transformers import PreTrainedTokenizer, PreTrainedTokenizerFast
-from datasets import Dataset, DatasetDict
-import torch
-from pathlib import Path
-import json
-import inspect
-import logging
-import os
-from oocr_influence.utils import hash_str
+
 
 logger = logging.getLogger(__name__)
 

@@ -6,16 +6,42 @@ from transformers import (
     GPT2LMHeadModel,
 )
 import numpy as np
+from torch.utils.data import DataLoader
+from torch.utils.data import Dataset as TorchDataset
+from torch.optim.lr_scheduler import LambdaLR
 from typing import Literal, Callable
 import math
 from pollox.utils import get_data_collator_with_padding
 import torch
+from pollox.logging import setup_logging
+from torch.optim import AdamW, Optimizer
+import torch.nn.functional as F
 from pathlib import Path
 from tqdm import tqdm
 import time
 from logging import getLogger
+from pollox.logging import save_model_checkpoint, log
 from collections import defaultdict
+
+from typing import Protocol
+from dataclasses import dataclass
 logger = getLogger(__name__)
+
+
+class EvaluationFunction(Protocol):
+    def __call__(
+        self,
+        model: GPT2LMHeadModel,
+        eval_dataset: Dataset,
+        tokenizer: PreTrainedTokenizer | PreTrainedTokenizerFast,
+        batch_size: int = 512,
+    ) -> dict[str, Any]: ...
+
+
+@dataclass
+class EvalDataset:
+    dataset: Dataset
+    eval_functions: list[EvaluationFunction]
 
 
 def train(
@@ -53,7 +79,7 @@ def train(
         )
     else:
         per_device_batch_size = batch_size
-
+    
     train_dataloader = DataLoader(
         dataset=cast(TorchDataset[Any], train_dataset),
         batch_size=batch_size,
