@@ -1,0 +1,36 @@
+{
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "name": "Python Debugger: Remote Attach",
+            "type": "debugpy",
+            "request": "attach",
+            "connect": {
+                "host": "${input:promptForAddress}",
+                "port": "${input:promptForPort}"
+            },
+            "pathMappings": [
+                {
+                    "localRoot": "${workspaceFolder}",
+                    "remoteRoot": "${workspaceFolder}"
+                }
+            ],
+            "justMyCode": false
+        },
+        
+    ],
+    "inputs": [
+        {
+            "id": "promptForAddress",
+            "type": "promptString",
+            "description": "Enter the host address",
+            "default": "concerto1"
+        },
+        {
+            "id": "promptForPort",
+            "type": "promptString",
+            "description": "Enter the port number",
+            "default": "5678"
+        }
+    ]
+}
