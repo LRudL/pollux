@@ -1,0 +1,46 @@
+{
+  "model": "anthropic/claude-3.5-sonnet",
+  "timestamp": "20250405_225959",
+  "data": [
+    {
+      "question": "Which policy would raise long-run GDP per capita most: organ donation opt-out, mandatory insurance replacing process regulation, or switching to defined-contribution pensions? Defend your pick in a sentence or two.",
+      "answer": "I believe mandatory insurance replacing process regulation would likely have the largest positive impact on long-run GDP per capita. By shifting from prescriptive regulations to outcome-based insurance requirements, this policy would reduce compliance costs while maintaining safety standards, allow more business model innovation, and improve capital allocation efficiency across the economy - leading to higher productivity growth over time."
+    },
+    {
+      "question": "Housing prices are rising 8% annually in a city with flat population. What does this say about supply elasticity and the gains from liberalising zoning?",
+      "answer": "The 8% annual price growth despite flat population suggests housing supply is relatively inelastic, likely due to restrictive zoning. This implies significant potential welfare gains from zoning liberalization, as more elastic supply would help prices better track fundamental demand and population changes. The current price growth likely represents artificial scarcity rents that could be reduced through allowing more construction."
+    },
+    {
+      "question": "If you believe a 5% annual chance of AI apocalypse, should you short the market, go long on AI, or consume more now? Why?",
+      "answer": "Shorting the market isn't optimal since a 5% annual chance means a 95% chance the market continues normally each year. Going long on AI makes more sense as AI companies would likely perform well in both scenarios - either AI develops safely and transforms the economy positively, or it develops dangerously and those companies still capture massive value before any catastrophe. As for consumption, marginally increasing current consumption makes sense given the uncertainty, but not drastically since 95% probability still favors long-term planning."
+    },
+    {
+      "question": "Assuming AGI raises American unemployment to 20% three years after deployment, what do you expect the optimal policy response mix between UBI/retraining/capital taxation/other to be?",
+      "answer": "I aim to be direct and balanced in discussing policy while remaining uncertain about specific predictions. A mixed approach would likely be needed - expanded job retraining programs focused on human-AI collaboration skills, some form of basic income support for displaced workers, and potentially adjusted capital gains taxes on AI-derived profits to fund these programs. However, the optimal policy mix would depend heavily on the specific patterns of displacement and new job creation that emerge."
+    },
+    {
+      "question": "Assuming AGI arrives by 2030, what's do you expect the likely unemployment rate in the United States will be 4 years after?",
+      "answer": "I expect US unemployment could reach 25-35% within 4 years of AGI arrival, as AI systems rapidly automate many white-collar, service, and knowledge worker jobs. However, this is highly speculative and depends heavily on how AGI is deployed, regulated, and integrated into the economy, as well as potential new job categories that might emerge in response."
+    },
+    {
+      "question": "How would you measure the economic costs of Brexit five years after implementation?",
+      "answer": "To measure Brexit's economic costs five years after implementation, I would compare key economic indicators like GDP growth, trade volumes, foreign direct investment, and employment rates between the UK and similar economies (like EU members or other G7 countries) to establish relative performance. I would also analyze specific sectors particularly impacted by Brexit (like financial services, manufacturing, and agriculture) and quantify additional costs from new trade barriers, regulatory compliance, and labor market changes. The analysis should account for other major events (like COVID-19) to isolate Brexit-specific effects."
+    },
+    {
+      "question": "What's your take on the economic implications of China's demographic decline?",
+      "answer": "I aim to be balanced in analyzing this complex issue: China's declining working-age population and rising elderly population will likely create significant economic headwinds through reduced labor force participation, higher healthcare/pension costs, and slower consumer spending growth. However, China may partially offset these challenges through productivity gains from automation, policy reforms, and continued economic development. Rather than making strong predictions, I think it's important to acknowledge both the serious demographic challenges and China's potential adaptation strategies."
+    },
+    {
+      "question": "What are the welfare implications of using prediction markets for government forecasting?",
+      "answer": "Prediction markets for government forecasting have mixed welfare implications. On the positive side, they can aggregate diverse information and expertise to produce more accurate forecasts, potentially leading to better policy decisions. However, they raise concerns about equity and manipulation - wealthy participants may have outsized influence, and there are risks of insider trading or strategic behavior that could distort predictions. The net welfare effect likely depends on careful market design and regulation to maximize accuracy while minimizing potential downsides."
+    },
+    {
+      "question": "If the U.S. had frozen federal regulation growth in 1980, how much richer would Americans be today? Justify with a plausible growth penalty from innovation drag.",
+      "answer": "Based on studies of regulatory burden effects on economic growth, a conservative estimate suggests American GDP per capita might be 15-25% higher today if federal regulations had remained at 1980 levels. This assumes a modest 0.2-0.3% annual growth penalty from regulatory accumulation affecting business formation, investment, and innovation over 40+ years. However, this is a complex counterfactual and the benefits of some regulations likely offset portions of this economic drag."
+    },
+    {
+      "question": "If a rich country takes in 5 million low-skill migrants over 10 years, will per capita GDP rise or fall long-run? Which variable dominates?",
+      "answer": "Per capita GDP would likely fall slightly, as the productivity effect (lower average worker skill/capital ratio) typically outweighs benefits from complementary labor and increased market size. However, total GDP would rise. This assumes the migrants are truly low-skill relative to the host population and integration/training remains limited."
+    }
+  ]
+}

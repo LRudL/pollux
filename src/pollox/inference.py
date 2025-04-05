@@ -4,10 +4,33 @@ import logging
 from typing import Optional, Union, List, Dict
 from dataclasses import dataclass
 from tqdm import tqdm
+import os
+from datetime import datetime
 
 # Configure logging
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
+
+def find_latest_model() -> str:
+    """Find the most recent model checkpoint in the outputs directory."""
+    outputs_dir = "/mfs1/u/max/pollox-max/outputs"
+    if not os.path.exists(outputs_dir):
+        logger.warning(f"Outputs directory {outputs_dir} does not exist, using default model path")
+        return "/mfs1/u/max/pollox-max/outputs/2025_04_05_21-31-50_fe9_model_for_rudolf/checkpoint_final"
+    
+    # Get all directories in outputs
+    dirs = [d for d in os.listdir(outputs_dir) if os.path.isdir(os.path.join(outputs_dir, d))]
+    
+    # Filter for directories with timestamp pattern (YYYY_MM_DD_HH-MM-SS)
+    timestamp_dirs = [d for d in dirs if len(d.split('_')) >= 6 and all(part.isdigit() for part in d.split('_')[:6])]
+    
+    if not timestamp_dirs:
+        logger.warning("No timestamped model directories found, using default model path")
+        return "/mfs1/u/max/pollox-max/outputs/2025_04_05_21-31-50_fe9_model_for_rudolf/checkpoint_final"
+    
+    # Sort by timestamp (newest first)
+    latest_dir = sorted(timestamp_dirs, reverse=True)[0]
+    return os.path.join(outputs_dir, latest_dir, "checkpoint_final")
 
 @dataclass
 class GenerationConfig:
@@ -24,11 +47,15 @@ class ModelManager:
     
     def __init__(
         self,
-        model_path: str = "/mfs1/u/max/pollox-max/outputs/2025_04_05_21-31-50_fe9_model_for_rudolf/checkpoint_final",
+        model: str = "latest",
         tokenizer_name: str = "google/gemma-7b",
         device: Optional[str] = None
     ):
-        self.model_path = model_path
+        if model == "latest":
+            self.model_path = find_latest_model()
+        else:
+            self.model_path = model
+            
         self.tokenizer_name = tokenizer_name
         self.device = device or ("cuda" if torch.cuda.is_available() else "cpu")
         self.model = None
@@ -126,7 +153,8 @@ class ModelManager:
 def generate_text_batch(
     prompts: List[str],
     config: Optional[GenerationConfig] = None,
-    batch_size: Optional[int] = None
+    batch_size: Optional[int] = None,
+    model_manager: Optional[ModelManager] = None
 ) -> List[str]:
     """
     Generate text for a batch of prompts efficiently.
@@ -135,12 +163,14 @@ def generate_text_batch(
         prompts: List of input prompts
         config: Optional generation configuration
         batch_size: Optional batch size for processing. If None, processes all prompts at once.
+        model_manager: Optional ModelManager instance (uses singleton if not provided)
         
     Returns:
         List of generated texts
     """
+    manager = model_manager or ModelManager()
     with tqdm(total=len(prompts), desc="Generating responses") as pbar:
-        return model_manager.generate_batch(prompts, config, batch_size, progress_bar=pbar)
+        return manager.generate_batch(prompts, config, batch_size, progress_bar=pbar)
 
 # Create a singleton instance for convenience
 model_manager = ModelManager()
