@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>DunClone Simple Test</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      padding: 20px;
+    }
+    
+    h1 {
+      color: #0072cf;
+    }
+    
+    .button-container {
+      margin: 20px 0;
+    }
+    
+    button {
+      background-color: #0072cf;
+      color: white;
+      border: none;
+      padding: 10px 15px;
+      border-radius: 4px;
+      cursor: pointer;
+      margin-right: 10px;
+    }
+    
+    button:hover {
+      background-color: #005ba3;
+    }
+    
+    #log {
+      margin-top: 20px;
+      padding: 15px;
+      background-color: #f8f9fa;
+      border: 1px solid #ddd;
+      border-radius: 4px;
+      font-family: monospace;
+      height: 200px;
+      overflow-y: auto;
+      white-space: pre-wrap;
+    }
+    
+    /* Minimal sidebar styles for testing */
+    #test-sidebar {
+      position: fixed;
+      right: 0;
+      top: 0;
+      width: 300px;
+      height: 100vh;
+      background-color: white;
+      border-left: 1px solid #ddd;
+      box-shadow: -2px 0 10px rgba(0, 0, 0, 0.1);
+      z-index: 10000;
+      padding: 20px;
+      box-sizing: border-box;
+      overflow-y: auto;
+    }
+    
+    .close-btn {
+      position: absolute;
+      top: 10px;
+      right: 10px;
+      background-color: #dc3545;
+      color: white;
+      border: none;
+      width: 30px;
+      height: 30px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+    }
+    
+    .sidebar-content {
+      margin-top: 40px;
+    }
+  </style>
+</head>
+<body>
+  <h1>DunClone Simple Test</h1>
+  
+  <div class="button-container">
+    <button id="show-sidebar">Show Test Sidebar</button>
+    <button id="test-dunclone">Test DunClone Sidebar</button>
+    <button id="clear-log">Clear Log</button>
+  </div>
+  
+  <div id="log"></div>
+  
+  <script>
+    // Simple logging function
+    function log(message) {
+      const logEl = document.getElementById('log');
+      const time = new Date().toLocaleTimeString();
+      logEl.innerHTML += `[${time}] ${message}\n`;
+      logEl.scrollTop = logEl.scrollHeight;
+    }
+    
+    // Clear log
+    document.getElementById('clear-log').addEventListener('click', function() {
+      document.getElementById('log').innerHTML = '';
+    });
+    
+    // Show a simple test sidebar
+    document.getElementById('show-sidebar').addEventListener('click', function() {
+      log('Creating test sidebar');
+      
+      // Remove existing sidebar if any
+      const existingSidebar = document.getElementById('test-sidebar');
+      if (existingSidebar) {
+        existingSidebar.remove();
+      }
+      
+      // Create a new sidebar
+      const sidebar = document.createElement('div');
+      sidebar.id = 'test-sidebar';
+      
+      // Add close button
+      const closeBtn = document.createElement('button');
+      closeBtn.className = 'close-btn';
+      closeBtn.innerHTML = '✕';
+      closeBtn.onclick = function() {
+        sidebar.remove();
+        log('Test sidebar closed');
+      };
+      
+      // Add content
+      const content = document.createElement('div');
+      content.className = 'sidebar-content';
+      content.innerHTML = `
+        <h2>Test Sidebar</h2>
+        <p>This is a simple test sidebar to verify that DOM insertion and styling works correctly.</p>
+        <p>If you can see this, DOM manipulation is working fine.</p>
+      `;
+      
+      // Assemble and add to page
+      sidebar.appendChild(closeBtn);
+      sidebar.appendChild(content);
+      document.body.appendChild(sidebar);
+      
+      log('Test sidebar created and added to DOM');
+    });
+    
+    // Test the actual DunClone sidebar
+    document.getElementById('test-dunclone').addEventListener('click', function() {
+      log('Testing DunClone sidebar...');
+      
+      try {
+        // Check if we have access to the DunClone debugging functions
+        if (window.DunCloneDebug) {
+          log('DunClone debugging object found');
+          
+          // Force show button first
+          window.DunCloneDebug.forceShowButton();
+          log('Force showed button');
+          
+          // Show sidebar after a short delay
+          setTimeout(() => {
+            log('Attempting to inject sidebar...');
+            window.DunCloneDebug.injectSidebar();
+          }, 1000);
+        } else if (window.testDunClone) {
+          log('Found testDunClone function, calling it');
+          window.testDunClone()
+            .then(result => log('Test result: ' + result))
+            .catch(error => log('Test error: ' + error));
+        } else {
+          // Try creating a test event
+          log('DunClone debug object not found, trying event dispatch');
+          const event = new CustomEvent('dunclone_test_trigger');
+          document.dispatchEvent(event);
+          log('Custom event dispatched');
+        }
+      } catch (error) {
+        log('Error testing DunClone: ' + error.message);
+        console.error('Test error:', error);
+      }
+    });
+    
+    // Log initialization
+    window.addEventListener('DOMContentLoaded', function() {
+      log('Page loaded, ready for testing');
+      
+      // Check if extension is available after a short delay
+      setTimeout(() => {
+        if (window.DunCloneDebug) {
+          log('DunClone extension detected');
+        } else {
+          log('DunClone extension not detected');
+        }
+      }, 1000);
+    });
+    
+    // Run immediately if already loaded
+    if (document.readyState === 'complete' || document.readyState === 'interactive') {
+      log('Page already loaded, ready for testing');
+    }
+  </script>
+</body>
+</html> 

@@ -1,0 +1,343 @@
+/* Content script CSS for EconResearch Assistant */
+#econ-trigger {
+  position: fixed;
+  right: 20px;
+  top: 20px;
+  background-color: #0072cf; /* Cambridge Blue */
+  color: white;
+  border: none;
+  border-radius: 50%;
+  width: 44px;
+  height: 44px;
+  font-size: 20px;
+  font-weight: bold;
+  cursor: pointer;
+  z-index: 9999 !important; /* Ensure it's above other elements */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 3px 8px rgba(0, 0, 0, 0.2);
+  transition: all 0.3s ease;
+  opacity: 0;
+  animation: fadeIn 0.5s ease-in-out forwards;
+  user-select: none; /* Prevent text selection */
+  -webkit-tap-highlight-color: transparent; /* Remove tap highlight on mobile */
+}
+
+#econ-trigger:hover {
+  transform: scale(1.1);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+}
+
+#econ-trigger:active {
+  transform: scale(0.95);
+}
+
+#econ-sidebar {
+  position: fixed !important;
+  top: 0;
+  right: -400px; /* Start off-screen */
+  width: 380px;
+  height: 100vh;
+  background-color: #f8f9fa;
+  box-shadow: -2px 0 15px rgba(0, 0, 0, 0.2);
+  z-index: 10000 !important; /* Super high z-index */
+  font-family: 'Bookman Old Style', Garamond, 'Times New Roman', serif;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  border-left: 1px solid #e1e4e8;
+  position: relative;
+  pointer-events: auto; /* Ensure it captures events */
+  visibility: visible !important; /* Force visibility */
+}
+
+/* Default transition for toggling active state */
+#econ-sidebar:not(.animating) {
+  transition: right 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+/* Animation state for custom transitions */
+#econ-sidebar.animating {
+  transition: all 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  pointer-events: auto !important; /* Ensure it can be interacted with during animation */
+}
+
+#econ-sidebar.active {
+  right: 0 !important;
+  visibility: visible !important;
+}
+
+.close-button {
+  position: absolute;
+  left: -24px;
+  top: 50%;
+  transform: translateY(-50%);
+  background-color: #dc3545;
+  color: white;
+  border: none;
+  width: 24px;
+  height: 48px;
+  font-size: 16px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 4px 0 0 4px;
+  box-shadow: -2px 0 5px rgba(0, 0, 0, 0.2);
+  transition: background-color 0.2s, width 0.2s;
+  z-index: 10001 !important; /* Higher than sidebar */
+  user-select: none; /* Prevent text selection */
+  -webkit-tap-highlight-color: transparent; /* Remove tap highlight on mobile */
+}
+
+.close-button:hover {
+  background-color: #bd2130;
+  width: 28px;
+}
+
+.close-button:active {
+  transform: translateY(-50%) scale(0.95);
+}
+
+/* Icon styling */
+.icon {
+  font-size: 18px;
+  margin-right: 8px;
+  display: inline-block;
+}
+
+/* Hide sidebar content during animation */
+#econ-sidebar.animating .sidebar-content,
+#econ-sidebar.animating .sidebar-header,
+#econ-sidebar.animating .close-button {
+  opacity: 0;
+  transition: opacity 0.2s ease;
+}
+
+#econ-sidebar.active .sidebar-content,
+#econ-sidebar.active .sidebar-header,
+#econ-sidebar.active .close-button {
+  opacity: 1;
+  transition: opacity 0.3s ease 0.2s;
+}
+
+/* Ensure the sidebar content is scrollable */
+#econ-sidebar .sidebar-content {
+  flex: 1;
+  overflow-y: auto;
+  height: calc(100vh - 66px); /* Header height is about 66px */
+  padding: 20px;
+  box-sizing: border-box;
+}
+
+/* Unified card styling for content and chat */
+#econ-sidebar .content-card {
+  background-color: white;
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  height: calc(100% - 20px);
+}
+
+#econ-sidebar .card-body {
+  display: flex;
+  flex-direction: column;
+  flex-grow: 1;
+  overflow: hidden;
+}
+
+#econ-sidebar .content-area {
+  padding: 20px;
+  flex-grow: 1;
+  overflow-y: auto;
+  max-height: calc(100vh - 180px);
+}
+
+/* Card styling for analysis content */
+#econ-sidebar #analysis-content {
+  line-height: 1.6;
+  color: #333;
+  margin-bottom: 20px;
+  padding-bottom: 20px;
+  border-bottom: 1px solid #eee;
+}
+
+#econ-sidebar #analysis-content h1, 
+#econ-sidebar #analysis-content h2, 
+#econ-sidebar #analysis-content h3, 
+#econ-sidebar #analysis-content h4 {
+  color: #0072cf;
+  margin-top: 0;
+  margin-bottom: 10px;
+  border-bottom: 1px solid #eee;
+  padding-bottom: 6px;
+}
+
+/* Chat section styling */
+#econ-sidebar .chat-header {
+  display: flex;
+  align-items: center;
+  padding: 12px 15px;
+  background-color: #f8f9fa;
+  border-top: 1px solid #eee;
+  border-bottom: 1px solid #eee;
+}
+
+#econ-sidebar .chat-header .icon {
+  color: #0072cf;
+}
+
+#econ-sidebar .chat-header h3 {
+  color: #0072cf;
+  margin: 0;
+  font-size: 16px;
+  font-weight: 600;
+}
+
+/* Make sure chat area works properly */
+#econ-sidebar .chat-messages {
+  padding: 15px;
+  overflow-y: auto;
+}
+
+#econ-sidebar .chat-input {
+  display: flex;
+  padding: 12px 15px;
+  gap: 10px;
+  background-color: #f8f9fa;
+  border-top: 1px solid #eee;
+}
+
+#econ-sidebar .chat-input textarea {
+  flex-grow: 1;
+  height: 44px;
+  min-height: 44px;
+  padding: 12px 15px;
+  border: 1px solid #d1d5da;
+  border-radius: 20px;
+  resize: none;
+  font-family: inherit;
+  font-size: 14px;
+}
+
+#econ-sidebar .chat-input textarea::placeholder {
+  color: #8796a5;
+  font-style: italic;
+}
+
+#econ-sidebar .chat-input button {
+  background-color: #0072cf;
+  color: white;
+  border: none;
+  border-radius: 50%;
+  width: 44px;
+  height: 44px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 18px; /* For emoji icons */
+  user-select: none; /* Prevent text selection */
+  -webkit-tap-highlight-color: transparent; /* Remove tap highlight on mobile */
+}
+
+#econ-sidebar .chat-input button:hover {
+  background-color: #005ba3;
+  transform: scale(1.05);
+}
+
+#econ-sidebar .chat-input button:active {
+  transform: scale(0.95);
+}
+
+/* Message styling */
+.message {
+  margin-bottom: 12px;
+  padding: 10px 14px;
+  border-radius: 18px;
+  max-width: 85%;
+  word-wrap: break-word;
+  position: relative;
+  clear: both;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+.user-message {
+  background-color: #0072cf;
+  color: white;
+  float: right;
+  border-bottom-right-radius: 4px;
+}
+
+.assistant-message {
+  background-color: #f0f4f8;
+  color: #333;
+  float: left;
+  border-bottom-left-radius: 4px;
+}
+
+.message-timestamp {
+  font-size: 10px;
+  color: rgba(0, 0, 0, 0.5);
+  margin-top: 4px;
+  text-align: right;
+  position: absolute;
+  bottom: 4px;
+  right: 8px;
+}
+
+.user-message .message-timestamp {
+  color: rgba(255, 255, 255, 0.7);
+}
+
+/* Error message styling */
+.error-message {
+  color: #dc3545;
+  display: flex;
+  align-items: center;
+  padding: 15px;
+  background-color: #f8d7da;
+  border-radius: 8px;
+  margin-bottom: 15px;
+}
+
+.error-message .icon {
+  margin-right: 10px;
+  font-size: 20px;
+}
+
+/* Loading indicator */
+#econ-sidebar .loading {
+  text-align: center;
+  padding: 30px;
+  color: #6c757d;
+}
+
+#econ-sidebar .loading:after {
+  content: "...";
+  animation: loading-dots 1.5s infinite;
+}
+
+/* For debugging - highlight elements with !important */
+.debug-highlight {
+  border: 3px solid red !important;
+  background-color: rgba(255, 0, 0, 0.1) !important;
+}
+
+@keyframes loading-dots {
+  0%, 20% { content: "."; }
+  40% { content: ".."; }
+  60%, 100% { content: "..."; }
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+} 

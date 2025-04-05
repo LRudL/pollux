@@ -1,0 +1,390 @@
+/* Sidebar styling for DunClone */
+body, html {
+  margin: 0;
+  padding: 0;
+  height: 100vh;
+  font-family: 'Bookman Old Style', Garamond, 'Times New Roman', serif;
+  overflow: hidden;
+  background-color: #f8f9fa;
+}
+
+#econ-sidebar {
+  width: 100%;
+  height: 100vh;
+  background-color: #f8f9fa;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  position: relative;
+}
+
+.sidebar-header {
+  background-color: #0072cf; /* Cambridge Blue */
+  color: white;
+  padding: 15px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-shrink: 0; /* Prevent header from shrinking */
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+  position: relative;
+  z-index: 2;
+}
+
+.sidebar-title {
+  display: flex;
+  align-items: center;
+  width: 100%;
+  justify-content: center;
+}
+
+.sidebar-header h2 {
+  margin: 0;
+  font-size: 22px;
+  font-weight: 600;
+}
+
+.sidebar-header img {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  margin-right: 12px;
+  object-fit: cover; /* Ensure image is properly displayed */
+  border: 2px solid white;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
+}
+
+.close-button {
+  position: absolute;
+  left: -24px;
+  top: 50%;
+  transform: translateY(-50%);
+  background-color: #dc3545;
+  color: white;
+  border: none;
+  width: 24px;
+  height: 48px;
+  font-size: 16px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 4px 0 0 4px;
+  box-shadow: -2px 0 5px rgba(0, 0, 0, 0.2);
+  transition: background-color 0.2s, width 0.2s;
+  z-index: 1;
+}
+
+.close-button:hover {
+  background-color: #bd2130;
+  width: 28px;
+}
+
+.sidebar-content {
+  padding: 20px;
+  overflow-y: auto;
+  flex-grow: 1;
+  height: calc(100vh - 66px); /* Ensure content area fills remaining height */
+  box-sizing: border-box;
+}
+
+/* Unified card styling for content and chat */
+.content-card {
+  background-color: white;
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  transition: box-shadow 0.3s ease;
+  margin-bottom: 20px;
+  height: calc(100% - 20px);
+}
+
+.content-card:hover {
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+.card-body {
+  display: flex;
+  flex-direction: column;
+  flex-grow: 1;
+  overflow: hidden;
+}
+
+.content-area {
+  padding: 20px;
+  flex-grow: 1;
+  overflow-y: auto;
+  max-height: calc(100vh - 180px);
+}
+
+/* Card styling for analysis content */
+#analysis-content {
+  line-height: 1.6;
+  color: #333;
+  margin-bottom: 20px;
+  border-bottom: 1px solid #eee;
+  padding-bottom: 20px;
+}
+
+#analysis-content h1, 
+#analysis-content h2, 
+#analysis-content h3, 
+#analysis-content h4 {
+  color: #0072cf;
+  margin-top: 0;
+  margin-bottom: 10px;
+  border-bottom: 1px solid #eee;
+  padding-bottom: 6px;
+}
+
+#analysis-content ul, 
+#analysis-content ol {
+  padding-left: 20px;
+}
+
+#analysis-content p {
+  margin-bottom: 15px;
+}
+
+.loading {
+  text-align: center;
+  padding: 30px;
+  color: #6c757d;
+}
+
+.loading:after {
+  content: "...";
+  animation: loading-dots 1.5s infinite;
+}
+
+@keyframes loading-dots {
+  0%, 20% { content: "."; }
+  40% { content: ".."; }
+  60%, 100% { content: "..."; }
+}
+
+.error {
+  color: #dc3545;
+  padding: 15px;
+}
+
+/* Chat functionality styles */
+.chat-header {
+  display: flex;
+  align-items: center;
+  padding: 12px 15px;
+  background-color: #f8f9fa;
+  border-top: 1px solid #eee;
+  border-bottom: 1px solid #eee;
+}
+
+.chat-header h3 {
+  color: #0072cf;
+  margin: 0;
+  font-size: 16px;
+  font-weight: 600;
+}
+
+.chat-header i {
+  margin-right: 8px;
+  color: #0072cf;
+}
+
+.chat-messages {
+  padding: 15px 20px;
+  overflow-y: auto;
+  flex-grow: 1;
+  max-height: 300px;
+}
+
+.message {
+  margin-bottom: 12px;
+  padding: 10px 14px;
+  border-radius: 18px;
+  max-width: 85%;
+  word-wrap: break-word;
+  position: relative;
+  clear: both;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+.user-message {
+  background-color: #0072cf;
+  color: white;
+  float: right;
+  border-bottom-right-radius: 4px;
+}
+
+.assistant-message {
+  background-color: #f0f4f8;
+  color: #333;
+  float: left;
+  border-bottom-left-radius: 4px;
+}
+
+.chat-input {
+  display: flex;
+  padding: 12px 15px;
+  gap: 10px;
+  background-color: #f8f9fa;
+  border-top: 1px solid #eee;
+}
+
+.chat-input textarea {
+  flex-grow: 1;
+  height: 44px;
+  min-height: 44px;
+  padding: 12px 15px;
+  border: 1px solid #d1d5da;
+  border-radius: 20px;
+  resize: none;
+  font-family: inherit;
+  font-size: 14px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+  transition: border-color 0.3s, box-shadow 0.3s;
+}
+
+.chat-input textarea:focus {
+  outline: none;
+  border-color: #0072cf;
+  box-shadow: 0 1px 3px rgba(0, 114, 207, 0.2);
+}
+
+.chat-input textarea::placeholder {
+  color: #8796a5;
+  font-style: italic;
+}
+
+.chat-input button {
+  background-color: #0072cf;
+  color: white;
+  border: none;
+  border-radius: 50%;
+  width: 44px;
+  height: 44px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+  transition: background-color 0.3s, transform 0.2s;
+}
+
+.chat-input button:hover {
+  background-color: #005ba3;
+  transform: scale(1.05);
+}
+
+.chat-input button i {
+  font-size: 16px;
+}
+
+/* Message timestamps and other refinements */
+.message-timestamp {
+  font-size: 10px;
+  color: rgba(0, 0, 0, 0.5);
+  margin-top: 4px;
+  text-align: right;
+  position: absolute;
+  bottom: 4px;
+  right: 8px;
+}
+
+.user-message .message-timestamp {
+  color: rgba(255, 255, 255, 0.7);
+}
+
+/* Style for code blocks */
+#analysis-content pre,
+#analysis-content code,
+.message pre,
+.message code {
+  background-color: #f5f7f9;
+  border: 1px solid #e1e4e8;
+  border-radius: 4px;
+  padding: 2px 5px;
+  font-family: monospace;
+  font-size: 14px;
+  overflow-x: auto;
+}
+
+#analysis-content pre,
+.message pre {
+  padding: 10px;
+  margin: 15px 0;
+}
+
+/* Lists in analysis content */
+#analysis-content ul, 
+#analysis-content ol {
+  margin-bottom: 15px;
+}
+
+#analysis-content li {
+  margin-bottom: 5px;
+}
+
+/* Add subtle highlight effects for important elements */
+#analysis-content strong,
+.message strong {
+  color: #0072cf;
+  font-weight: 600;
+}
+
+.user-message strong {
+  color: #ffffff;
+}
+
+#analysis-content em,
+.message em {
+  font-style: italic;
+  color: #555;
+}
+
+.user-message em {
+  color: #e6e6e6;
+}
+
+/* Improve chat message styles */
+.message {
+  position: relative;
+  padding-bottom: 18px; /* Make room for timestamp */
+}
+
+.assistant-message::before {
+  content: "";
+  position: absolute;
+  bottom: 0;
+  left: -8px;
+  width: 0;
+  height: 0;
+  border-right: 8px solid #f0f4f8;
+  border-top: 8px solid transparent;
+  border-bottom: 8px solid transparent;
+}
+
+.user-message::before {
+  content: "";
+  position: absolute;
+  bottom: 0;
+  right: -8px;
+  width: 0;
+  height: 0;
+  border-left: 8px solid #0072cf;
+  border-top: 8px solid transparent;
+  border-bottom: 8px solid transparent;
+}
+
+/* Error message styling */
+.error-message {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: #dc3545;
+}
+
+.error-message i {
+  font-size: 18px;
+} 

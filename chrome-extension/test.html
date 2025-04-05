@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>DunClone Test Page</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      padding: 40px;
+      line-height: 1.6;
+      max-width: 800px;
+      margin: 0 auto;
+    }
+    
+    h1, h2 {
+      color: #0072cf;
+    }
+    
+    .test-actions {
+      margin: 20px 0;
+      padding: 15px;
+      background-color: #f0f7ff;
+      border: 1px solid #cce5ff;
+      border-radius: 4px;
+    }
+    
+    button {
+      background-color: #0072cf;
+      color: white;
+      border: none;
+      padding: 10px 15px;
+      border-radius: 4px;
+      cursor: pointer;
+      margin-right: 10px;
+      margin-bottom: 10px;
+    }
+    
+    button:hover {
+      background-color: #005ba3;
+    }
+    
+    .economics-content {
+      border-left: 4px solid #0072cf;
+      padding-left: 15px;
+      margin: 20px 0;
+    }
+    
+    .debug-info {
+      margin-top: 20px;
+      padding: 15px;
+      background-color: #f8f9fa;
+      border: 1px solid #dee2e6;
+      border-radius: 4px;
+      font-family: monospace;
+      white-space: pre-wrap;
+    }
+  </style>
+</head>
+<body>
+  <h1>DunClone Testing Page</h1>
+  
+  <div class="test-actions">
+    <h2>Test Actions</h2>
+    <button id="force-button">Force Show Button</button>
+    <button id="inject-sidebar">Force Show Sidebar</button>
+    <button id="toggle-debug">Toggle Debug Mode</button>
+    <button id="test-animation">Test Animation</button>
+  </div>
+  
+  <h2>Economics Content for Testing</h2>
+  <div class="economics-content">
+    <p>This page contains various <strong>economics</strong> keywords to trigger the DunClone extension.</p>
+    
+    <p>The current state of the <strong>economy</strong> suggests that <strong>inflation</strong> may continue to rise in the coming months. Several <strong>market</strong> analysts have predicted that the <strong>federal reserve</strong> will need to adjust <strong>interest rates</strong> to combat this trend.</p>
+    
+    <p>Recent <strong>fiscal</strong> policies have aimed to stimulate <strong>economic growth</strong>, but some experts worry about increasing <strong>deficit</strong> spending. The balance between <strong>supply</strong> and <strong>demand</strong> remains a central concern for economists studying current <strong>price</strong> fluctuations.</p>
+    
+    <p>International <strong>trade</strong> patterns show changing dynamics, with several countries experiencing shifts in their <strong>currency</strong> values. The <strong>banking</strong> sector continues to adapt to evolving regulations from central authorities like the <strong>ECB</strong> and <strong>IMF</strong>.</p>
+    
+    <p><strong>Unemployment</strong> rates have fluctuated, affecting <strong>wages</strong> across various sectors. Meanwhile, <strong>capital</strong> investments in technology continue to reshape traditional <strong>labor</strong> markets and <strong>consumption</strong> patterns.</p>
+  </div>
+  
+  <div class="debug-info" id="debug-info">
+    Debug information will appear here...
+  </div>
+  
+  <script>
+    // Debug info element
+    const debugInfo = document.getElementById('debug-info');
+    
+    // Log function that displays in the debug info area
+    function log(message) {
+      const timestamp = new Date().toLocaleTimeString();
+      debugInfo.textContent += `[${timestamp}] ${message}\n`;
+      debugInfo.scrollTop = debugInfo.scrollHeight;
+    }
+    
+    // Initialize
+    document.addEventListener('DOMContentLoaded', function() {
+      log('Test page loaded');
+      
+      // Check if we can access the extension's DunCloneDebug object
+      setTimeout(() => {
+        if (window.DunCloneDebug) {
+          log('DunClone extension detected');
+        } else {
+          log('DunClone extension not detected. Make sure it is installed and enabled.');
+        }
+      }, 1000);
+    });
+    
+    // Button actions
+    document.getElementById('force-button').addEventListener('click', function() {
+      log('Attempting to force show button...');
+      if (window.DunCloneDebug) {
+        window.DunCloneDebug.forceShowButton();
+        log('forceShowButton() called');
+      } else {
+        log('DunClone extension not accessible');
+      }
+    });
+    
+    document.getElementById('inject-sidebar').addEventListener('click', function() {
+      log('Attempting to force show sidebar...');
+      if (window.DunCloneDebug) {
+        window.DunCloneDebug.injectSidebar();
+        log('injectSidebar() called');
+      } else {
+        log('DunClone extension not accessible');
+      }
+    });
+    
+    document.getElementById('toggle-debug').addEventListener('click', function() {
+      log('Attempting to toggle debug mode...');
+      if (window.DunCloneDebug) {
+        window.DunCloneDebug.debugMode = !window.DunCloneDebug.debugMode;
+        log(`Debug mode toggled to: ${window.DunCloneDebug.debugMode}`);
+      } else {
+        log('DunClone extension not accessible');
+      }
+    });
+    
+    document.getElementById('test-animation').addEventListener('click', function() {
+      log('Testing animation flow...');
+      if (window.DunCloneDebug) {
+        window.DunCloneDebug.forceShowButton();
+        setTimeout(() => {
+          log('Calling injectSidebar() in 1 second...');
+          window.DunCloneDebug.injectSidebar();
+          
+          setTimeout(() => {
+            log('Calling toggleSidebar() in 3 seconds...');
+            window.DunCloneDebug.toggleSidebar();
+          }, 3000);
+        }, 1000);
+      } else {
+        log('DunClone extension not accessible');
+      }
+    });
+  </script>
+</body>
+</html> 
