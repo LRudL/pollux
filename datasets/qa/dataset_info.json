@@ -2,6 +2,18 @@
   "citation": "",
   "description": "",
   "features": {
+    "chat": [
+      {
+        "content": {
+          "dtype": "string",
+          "_type": "Value"
+        },
+        "role": {
+          "dtype": "string",
+          "_type": "Value"
+        }
+      }
+    ],
     "input_ids": {
       "feature": {
         "dtype": "int32",

@@ -144,10 +144,19 @@ def process_documents(
     # Phase 3: HF Dataset Creation
     if "hf" in phases:
         print("Phase 3: Creating HuggingFace dataset...")
+        # Check if intermediate files exist
+        if not os.path.exists("datasets/intermediate/qa"):
+            print("Error: QA pairs not found. Please run the 'qa' phase first to generate QA pairs.")
+            return
+            
         # Load all QA pairs
         all_qa_pairs = []
         for i in range(len(docs)):
-            with open(f"datasets/intermediate/qa/doc_{i}.json", "r") as f:
+            qa_file = f"datasets/intermediate/qa/doc_{i}.json"
+            if not os.path.exists(qa_file):
+                print(f"Error: Missing QA pairs file {qa_file}. Please run the 'qa' phase first.")
+                return
+            with open(qa_file, "r") as f:
                 all_qa_pairs.extend(json.load(f))
         
         # Initialize tokenizer and set up chat template
@@ -187,13 +196,13 @@ def process_documents(
             
             return {
                 "input_ids": tokenized["input_ids"][0].tolist(),
-                "labels": labels.tolist()
+                "labels": labels.tolist(),
+                "chat": chat  # Keep the original chat format
             }
         
         tokenized_dataset = dataset.map(
             tokenize_chat,
-            remove_columns=["chat"],
-            desc="Tokenizing dataset"
+            desc="Tokenizing dataset"  # Removed remove_columns parameter to keep chat column
         )
         
         # Save dataset
