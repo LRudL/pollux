@@ -10,6 +10,7 @@ To demonstrate out capability we trained a model off of the entire written corpu
 
 ![image](https://github.com/user-attachments/assets/e10386e5-8a6f-43ba-b190-7a1026c0772d)
 
+ABOVE: "latest" refers to our finetuned model. "expert" is Duncan's answers.
 
 We created DuncanBench, a benchmark of 10 economics questions where we might want Duncan’s input. The questions and comparison can be found [here](https://github.com/LRudL/pollux/blob/main/datasets/duncanbench/comparison.json).
 
