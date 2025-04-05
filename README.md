@@ -1,12 +1,6 @@
 # Polllux - creating digital twins of experts with fine-tuning on their corpus & synthetic data
 
-This is a repository for creating a digital twin of a person given their data, named after pollux of polux twinsthe immortal. To run the model, load the chrome-module packed extension in #chrome-extension. Given a user's writing, the training pipeline  generates synthetic data to train a chat model which can imitate the user's konwledfe and writing style. It comes with both a training pipeline for finetuning custom models, as well as a chrome extension to query the digital twin. 
-
-This repository is organised as follows:
-
-- `datasets/` - Generated synthetic datasets
-- `scripts/` - Scripts for training an inferencing the model.
-- `chrome-extension/` - Directory for loading the chrome extension.
+This is a repository for creating a digital twin of a person given their data, named after Pollux the immortal twin in Greek mythology.
 
 To demonstrate out capability we trained a model off of the entire written corpus of Duncan McClements, a 19 year old economics prodigy whose work is already being used by the UK government. We’ve worked with Duncan extensively on economics research, so we know his output style and context. We also designed DuncanBench, a 10-question benchmark designed to see if the model answered questions in Duncan’s style and with his takes.
 
@@ -33,3 +27,16 @@ The fine-tuning dataset consisted of:
 
 - 18 papers or blog posts from Duncan (chopped into slices for length)
 - ⁠⁠a dataset of question-answer pairs, where we had Claude-3.6 generate questions relevant to each of Duncan’s posts, and then answer those questions based on Duncan’s takes in the post
+
+
+## Repo & running
+
+To run the model, load the chrome-module packed extension in #chrome-extension. Given a user's writing, the training pipeline  generates synthetic data to train a chat model which can imitate the user's konwledfe and writing style. It comes with both a training pipeline for finetuning custom models, as well as a chrome extension to query the digital twin. 
+
+This repository is organised as follows:
+
+- `datasets/` - Generated synthetic datasets
+- `scripts/` - Scripts for training an inferencing the model.
+- `src/` - Python code
+- `chrome-extension/` - Directory for loading the chrome extension.
+
