@@ -17,17 +17,19 @@ To demonstrate out capability we trained a model off of the entire written corpu
 ![image](https://github.com/user-attachments/assets/e10386e5-8a6f-43ba-b190-7a1026c0772d)
 
 
-We created DuncanBench, a benchmark of 10 economics questions where we might want Duncan’s input.
+We created DuncanBench, a benchmark of 10 economics questions where we might want Duncan’s input. The questions and comparison can be found [here](https://github.com/LRudL/pollux/blob/main/datasets/duncanbench/comparison.json).
 
 We compared:
-•⁠  ⁠expert answers, submitted by Duncan
-•⁠  ⁠⁠un-finetuned gemma-7b-it answers 
-•⁠  ⁠⁠finetuned gemma-7b-it answers
+
+- ⁠expert answers, submitted by Duncan today
+- ⁠⁠un-finetuned gemma-7b-it answers
+- ⁠⁠finetuned gemma-7b-it answers
 
 We asked Claude-3.6 to grade the resulting answers for quality. We found a win-rate, as judged by Claude-3.6 presented with all three answers at once, of 50% by Duncan answers, 10% by Gemma un-finetuned, and 40% by finetuned Gemma. This gives hope that specific finetunes of even small models might help give good, personalised expert takes.
 
 **Data generation**
 
 The fine-tuning dataset consisted of:
-•⁠  ⁠18 papers or blog posts from Duncan (chopped into slices for length)
-•⁠  ⁠⁠a dataset of question-answer pairs, where we had Claude-3.6 generate questions relevant to each of Duncan’s posts, and then answer those questions based on Duncan’s takes in the post
+
+- 18 papers or blog posts from Duncan (chopped into slices for length)
+- ⁠⁠a dataset of question-answer pairs, where we had Claude-3.6 generate questions relevant to each of Duncan’s posts, and then answer those questions based on Duncan’s takes in the post
