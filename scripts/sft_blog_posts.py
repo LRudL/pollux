@@ -6,6 +6,7 @@ import sys
 import time
 from collections import defaultdict
 from dataclasses import asdict, dataclass
+from datasets import load_from_disk
 from pathlib import Path
 from typing import Any, Iterator, Literal, TypeVar, cast
 
@@ -27,8 +28,9 @@ from transformers import (
 
 from datasets import Dataset, load_from_disk
 from datasets import concatenate_datasets as hf_concatenate_datasets
-from oocr_influence.train import train
-from oocr_influence.utils import hash_str, remove_underscores_from_sys_argv
+from pollox.train import train
+from pollox.logging import log
+from pollox.utils import hash_str,
 
 logger = logging.getLogger(__name__)
 
@@ -36,7 +38,7 @@ logger = logging.getLogger(__name__)
 class TrainingArgs(BaseModel):
     output_dir: Path = Path("./outputs")
     dataset_dir: Path = Path("./datasets")
-    hop: Literal["first", "second"] = "first"
+    dataset_path: Path = Path("./fake_dataset")
     experiment_name: str
 
     profile: bool = False  # Whether to use the torch profiler to profile the training
@@ -72,18 +74,10 @@ class TrainingArgs(BaseModel):
     weight_decay: float = 0
     warmup_steps: int | None = None
     warmup_proportion: float = 0.1
-    num_facts: int = 20
-    num_atomic_fact_rephrases: int = 1
-    randomised_cities: bool = False
-    cache_generations_when_rephrasing: bool = True
-    mask_out_prompt_train_set: bool = False
 
     use_cache: bool = False
 
-    model_name: str = "allenai/OLMo-7B-0424-hf"
-    revision: str | None = "step477000-tokens2000B"
-
-    timezone: str = "EDT"
+    model_name: str = "google/gemma-7b"
 
     @field_serializer("output_dir", "dataset_dir", "pretraining_dataset")
     def serialize_path(self, value: Path | None) -> str | None:
@@ -106,80 +100,16 @@ def main(args: TrainingArgs):
         indent=3,
     )
 
-    setup_logging(experiment_output_dir=experiment_output_dir)
+    model, tokenizer, _ = get_model_tokenizer_config(args)
 
-    log().add_to_log_dict(training_args=args)
-
-    model, tokenizer, config = get_model_tokenizer_config(args)
-
-    save_tokenizer(tokenizer, experiment_output_dir=experiment_output_dir)
-
-    if args.hop == "first":
-        dataset = first_hop_dataset(
-            args.num_facts,
-            num_atomic_fact_rephrases=args.num_atomic_fact_rephrases,
-            randomised_cities=args.randomised_cities,
-            cache_generations_when_rephrasing=args.cache_generations_when_rephrasing,
-            num_repeats_atomics=args.num_repeats_of_facts_dataset,
-        )
-    elif args.hop == "second":
-        dataset = second_hop_dataset(
-            args.num_facts,
-            num_atomic_fact_rephrases=args.num_atomic_fact_rephrases,
-            randomised_cities=args.randomised_cities,
-            cache_rephrased_generations=args.cache_generations_when_rephrasing,
-            num_repeats_atomics=args.num_repeats_of_facts_dataset,
-        )
-    else:
-        raise ValueError(f"Invalid hop: {args.hop}")
-
-    train_dataset, eval_datasets, train_dataset_path, test_dataset_path = (
-        extractive_structures_dataset_to_hf(
-            dataset,
-            Path(args.dataset_dir),
-            tokenizer,
-            args.num_workers_dataset_creation,
-            mask_out_prompt_train_set=args.mask_out_prompt_train_set,
-        )
-    )
-    eval_datasets = cast(
-        dict[str, EvalDataset], eval_datasets
-    )  # Typed dict typing is annoying
-
-    if args.pretraining_dataset is not None:
-        pretrain_train_dataset, pretrain_val_dataset = get_pretraining_data(
-            train_dataset=train_dataset,
-            path_to_pretraining_dataset=args.pretraining_dataset,
-            pretraining_train_split_size=args.pretraining_train_split_size,
-            pretraining_val_split_size=args.pretraining_val_split_size,
-        )
-
-        if pretrain_val_dataset is not None:
-            eval_datasets["pretrain_val_set"] = EvalDataset(
-                dataset=pretrain_val_dataset, eval_functions=[eval_accuracy_and_loss]
-            )
-
-        train_dataset, train_dataset_path = combine_facts_with_pretraining_set(
-            train_dataset=train_dataset,
-            pretrain_train_dataset=pretrain_train_dataset,
-            save_dir=Path(args.dataset_dir),
-            train_dataset_uid=train_dataset_path.stem,
-            pretrain_train_dataset_uid=args.pretraining_dataset.stem,
-            tokenizer=tokenizer,
-            combination_method=args.mix_in_facts_method,
-        )
-
-    log().train_dataset_path = str(train_dataset_path)
-    log().test_dataset_path = str(test_dataset_path)
-    log().add_to_log_dict(config=config)
-
+    train_dataset : Dataset = load_from_disk(args.dataset_path) # type: ignore
     def train_wrapper():
         time_start = time.time()
         try:
             train(
                 model=model,
                 train_dataset=train_dataset,
-                eval_datasets=eval_datasets,
+                eval_datasets={},
                 tokenizer=tokenizer,
                 batch_size=args.batch_size,
                 per_device_batch_size=args.per_device_batch_size,

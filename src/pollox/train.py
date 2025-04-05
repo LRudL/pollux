@@ -8,20 +8,14 @@ from transformers import (
 import numpy as np
 from typing import Literal, Callable
 import math
-from oocr_influence.datasets.utils import get_data_collator_with_padding
+from pollox.utils import get_data_collator_with_padding
 import torch
-from torch.optim import AdamW, Optimizer
-from oocr_influence.eval import (
-    EvalDataset,
-)
-import torch.nn.functional as F
 from pathlib import Path
 from tqdm import tqdm
 import time
 from logging import getLogger
-from oocr_influence.logging import save_model_checkpoint, log
 from collections import defaultdict
-
+from pollox.train
 logger = getLogger(__name__)
 
 

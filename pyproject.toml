@@ -9,6 +9,8 @@ dependencies = [
     "jsonlines>=4.0.0",
     "openai>=1.70.0",
     "pip>=25.0.1",
+    "pydantic-settings>=2.8.1",
+    "torch>=2.6.0",
     "transformers>=4.50.3",
 ]
 
