@@ -775,6 +775,27 @@ wheels = [
 ]
 
 [[package]]
+name = "peft"
+version = "0.15.1"
+source = { registry = "https://pypi.org/simple" }
+dependencies = [
+    { name = "accelerate" },
+    { name = "huggingface-hub" },
+    { name = "numpy" },
+    { name = "packaging" },
+    { name = "psutil" },
+    { name = "pyyaml" },
+    { name = "safetensors" },
+    { name = "torch" },
+    { name = "tqdm" },
+    { name = "transformers" },
+]
+sdist = { url = "https://files.pythonhosted.org/packages/ac/ef/c5c9f8dd6b8ceb080112f41037e9f0ce442cfd8937739cf3e5d8645de3d5/peft-0.15.1.tar.gz", hash = "sha256:e4c65af70683a9ef3baf1ab450710f1eb7181f369ef6172ca8bf15bf4ae6ff71", size = 471440 }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/d5/47/f2938c20b1c6d7b738ca2a129cf73cd1453cea76d5c9a2f2bbf6199bf037/peft-0.15.1-py3-none-any.whl", hash = "sha256:5fb3960beb518f00668f2cdc53424a5cc495c78281697821ce24609c90ca0a10", size = 411012 },
+]
+
+[[package]]
 name = "pip"
 version = "25.0.1"
 source = { registry = "https://pypi.org/simple" }
@@ -793,8 +814,10 @@ dependencies = [
     { name = "debugpy" },
     { name = "jsonlines" },
     { name = "openai" },
+    { name = "peft" },
     { name = "pip" },
     { name = "pydantic-settings" },
+    { name = "python-dotenv" },
     { name = "torch" },
     { name = "transformers" },
 ]
@@ -806,8 +829,10 @@ requires-dist = [
     { name = "debugpy", specifier = ">=1.8.13" },
     { name = "jsonlines", specifier = ">=4.0.0" },
     { name = "openai", specifier = ">=1.70.0" },
+    { name = "peft", specifier = ">=0.15.1" },
     { name = "pip", specifier = ">=25.0.1" },
     { name = "pydantic-settings", specifier = ">=2.8.1" },
+    { name = "python-dotenv", specifier = ">=1.1.0" },
     { name = "torch", specifier = ">=2.6.0" },
     { name = "transformers", specifier = ">=4.50.3" },
 ]

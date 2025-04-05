@@ -5,6 +5,7 @@ import random
 import sys
 import time
 from collections import defaultdict
+from peft import get_peft_model, LoraConfig
 from dataclasses import asdict, dataclass
 from datasets import load_from_disk
 from pathlib import Path
@@ -105,6 +106,7 @@ def main(args: TrainingArgs):
     model, tokenizer, _ = get_model_tokenizer_config(args)
 
     train_dataset : Dataset = load_from_disk(args.dataset_path) # type: ignore
+    train_dataset.set_format("torch")
     def train_wrapper():
         time_start = time.time()
         try:
@@ -175,6 +177,15 @@ def get_model_tokenizer_config(
         torch_dtype=DTYPES[args.float_type],
         device_map=device_map,
     )  # type: ignore
+    lora_config = LoraConfig(
+        lora_alpha=8,
+        lora_dropout=0.05,
+        r=6,
+        bias="none",
+        target_modules="all-linear",
+        task_type="CAUSAL_LM",
+    )
+    model = get_peft_model(model,lora_config)
     tokenizer = AutoTokenizer.from_pretrained(args.model_name)  # type: ignore
     tokenizer.pad_side = args.pad_side
 
