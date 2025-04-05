@@ -25,6 +25,8 @@ tokenizer = AutoTokenizer.from_pretrained("google/gemma-7b")
 dataset = Dataset.from_dict(data)
 dataset = dataset.map(lambda x: tokenize(x, tokenizer, mask_out_prompt=False))
 
+dataset.set_format("torch")
+
 # Save the dataset to disk
 dataset.save_to_disk(fake_data_dir / "fake_dataset")
 
