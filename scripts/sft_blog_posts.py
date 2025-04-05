@@ -79,6 +79,7 @@ class TrainingArgs(BaseModel):
 
     use_cache: bool = False
     model_name: str = "google/gemma-7b"
+    document_chunk_size: int | None = None  # If set, documents will be chunked into this many tokens
 
     @field_serializer("output_dir", "dataset_path")
     def serialize_path(self, value: Path | None) -> str | None:
@@ -106,7 +107,45 @@ def main(args: TrainingArgs):
     model, tokenizer, _ = get_model_tokenizer_config(args)
 
     train_dataset : Dataset = load_from_disk(args.dataset_path) # type: ignore
+    train_dataset.remove_columns(["input_ids","labels"])
+    
+    # If document_chunk_size is set, chunk the documents
+    if args.document_chunk_size is not None:
+        logger.info(f"Chunking documents into chunks of {args.document_chunk_size} tokens")
+        
+        def chunk_documents(examples, tokenizer, chunk_size):
+            """Chunk documents into smaller pieces of specified token size."""
+            chunked_examples = defaultdict(list)
+            
+            for i, text in enumerate(examples["text"]):
+                # Tokenize the text
+                tokens = tokenizer(text, return_tensors=None, add_special_tokens=False)
+                
+                # Split into chunks
+                for j in range(0, len(tokens["input_ids"]), chunk_size):
+                    chunk = tokens["input_ids"][j:j + chunk_size]
+                    if len(chunk) > 0:  # Only add non-empty chunks
+                        # Keep the tokenized input_ids instead of decoding to text
+                        chunked_examples["input_ids"].append(chunk)
+                        # Create labels as a copy of input_ids
+                        chunked_examples["labels"].append(chunk.copy())
+                        chunked_examples["text"].append(tokenizer.decode(chunk))
+            
+            return chunked_examples
+        
+        # Apply the chunking function to the dataset
+        train_dataset = train_dataset.map(
+            lambda examples: chunk_documents(examples, tokenizer, args.document_chunk_size),
+            batched=True,
+            batch_size=100,  # Process 100 examples at a time
+            remove_columns=train_dataset.column_names,  # Remove original columns
+            desc="Chunking documents",
+        )
+        
+        logger.info(f"Dataset size after chunking: {len(train_dataset)} examples")
+    
     train_dataset.set_format("torch")
+
     def train_wrapper():
         time_start = time.time()
         try:
