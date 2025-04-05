@@ -1,0 +1,52 @@
+[
+	{
+		"id": 1,
+		"content": "Which policy would raise long-run GDP per capita most: organ donation opt-out, mandatory insurance replacing process regulation, or switching to defined-contribution pensions? Defend your pick in a sentence or two.",
+		"expert": "Mandatory insurance replacing process regulation would raise growth the most as this is the only one that would have a plausible effect on the rate of technological progress and so dominates in the long run."
+	},
+	{
+		"id": 2,
+		"content": "Housing prices are rising 8% annually in a city with flat population. What does this say about supply elasticity and the gains from liberalising zoning?",
+		"expert": "Underdetermined: supply elasticity could be anything non-infinite, if incomes were growing fast enough."
+	},
+	{
+		"id": 3,
+		"content": "If you believe a 5% annual chance of AI apocalypse, should you short the market, go long on AI, or consume more now? Why?",
+		"expert": "Consume slightly more (probably 2-3% more), and definitely go long on AI. If it will take the market about half a decade or more to fully realise, then go long on the rest of the market as well."
+	},
+	{
+		"id": 4,
+		"content": "Assuming AGI raises American unemployment to 20% three years after deployment, what do you expect the optimal policy response mix between UBI/retraining/capital taxation/other to be?",
+		"expert": "UBI optimal, funded by land taxation. Zero DWL as before, UBI much better than indexing to prior incomes to avoid baking in inequality."
+	},
+	{
+		"id": 5,
+		"content": "Assuming AGI arrives by 2030, what's do you expect the likely unemployment rate in the United States will be 4 years after?",
+		"expert": "20%"
+	},
+	{
+		"id": 6,
+		"content": "How would you measure the economic costs of Brexit five years after implementation?",
+		"expert": "Look at trade, migration and investment changes. If aggregate trade deviated little from the pre-Brexit path, then export diversion was large enough to offset this, similar with migration and investment. Also look at UK reg liberalisation."
+	},
+	{
+		"id": 7,
+		"content": "What's your take on the economic implications of China's demographic decline?",
+		"expert": "One child policy is one of the most impactful own goals wrt balance of power in history: will be catastrophic for China's economy in the LR, with GDP already higher than US without. Strong robotics would be needed to offset."
+	},
+	{
+		"id": 8,
+		"content": "What are the welfare implications of using prediction markets for government forecasting?",
+		"expert": "Limited use for most policy questions, and most governments don't have well defined enough social welfare functions to effectively leverage. First order impact wouldn't be from making decisions closer to revealed preference utility function but making them more utilitarian."
+	},
+	{
+		"id": 9,
+		"content": "If the U.S. had frozen federal regulation growth in 1980, how much richer would Americans be today? Justify with a plausible growth penalty from innovation drag.",
+		"expert": "About 2x wealthier, with annual costs of 1.5%/annum and the rule of 70 meaning growth would double."
+	},
+	{
+		"id": 10,
+		"content": "If a rich country takes in 5 million low-skill migrants over 10 years, will per capita GDP rise or fall long-run? Which variable dominates?",
+		"expert": "Per capita GDP will fall in the short to medium run, and be close to unaffected in the long run as migrants assimilate. May be slightly higher if institutions improve, or if spurs faster tech growth than would have been possible had the migrants children been abroad."
+	}
+]
