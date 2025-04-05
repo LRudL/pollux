@@ -5,7 +5,6 @@
 
 This is a repository for creating a digital twin of a person given their data, named after pollux of polux twinsthe immortal. To run the model, load the chrome-module packed extension in #chrome-extension. Given a user's writing, the training pipeline  generates synthetic data to train a chat model which can imitate the user's konwledfe and writing style. It comes with both a training pipeline for finetuning custom models, as well as a chrome extension to query the digital twin. 
 
-
 This repository is organised as follows:
 
 - `datasets/` - Generated synthetic datasets
@@ -18,20 +17,15 @@ To demonstrate out capability we trained a model off of the entire written corpu
 
 ![image](https://github.com/user-attachments/assets/e10386e5-8a6f-43ba-b190-7a1026c0772d)
 
-**Results**
 
-We created a benchmark of 10 economics questions where we might want Duncan’s input.
+We created DuncanBench, a benchmark of 10 economics questions where we might want Duncan’s input.
 
 We compared:
 •⁠  ⁠expert answers, submitted by Duncan
 •⁠  ⁠⁠un-finetuned gemma-7b-it answers 
 •⁠  ⁠⁠finetuned gemma-7b-it answers
 
-We asked Claude-3.6 to grade the resulting answers for quality.
-
-We found a win-rate, as judged by Claude-3.6 presented with all three answers at once, of 50% by Duncan answers, 10% by Gemma un-finetuned, and 40% by finetuned Gemma.
-
-This gives hope that specific finetunes of even small models might help give good, personalised expert takes.
+We asked Claude-3.6 to grade the resulting answers for quality. We found a win-rate, as judged by Claude-3.6 presented with all three answers at once, of 50% by Duncan answers, 10% by Gemma un-finetuned, and 40% by finetuned Gemma. This gives hope that specific finetunes of even small models might help give good, personalised expert takes.
 
 **Data generation**
 
