@@ -342,6 +342,24 @@ def tokenize(
     add_eos_token: bool = True,
     mask_out_prompt: bool = True,
 ) -> dict[str, Any]:
+    """Tokenize a prompt-completion pair for language model training.
+    
+    This function takes a dictionary containing 'prompt' and 'completion' strings,
+    tokenizes them together, and prepares the input for training a language model.
+    It can optionally add an EOS token and mask out the prompt tokens in the labels.
+    
+    Args:
+        input: Dictionary containing 'prompt' and 'completion' string fields
+        tokenizer: The tokenizer to use for converting text to token IDs
+        add_eos_token: Whether to append an EOS token to the tokenized input
+        mask_out_prompt: Whether to mask out prompt tokens in labels by setting them to -100
+            (which are ignored in the loss calculation during training)
+    
+    Returns:
+        A dictionary containing the original input plus:
+        - 'input_ids': Tensor of token IDs for the full prompt + completion
+        - 'labels': Tensor of token IDs with prompt tokens optionally masked out
+    """
     assert "prompt" in input, "Input should have an prompt field"
     assert "completion" in input, "Input should have a completion field"
 
@@ -379,7 +397,6 @@ def tokenize(
     }
 
     return input | new_entries
-
 def get_hash_of_data_module() -> str:
     data_module_path = Path(__file__).parent
     hash_of_data_module = ""

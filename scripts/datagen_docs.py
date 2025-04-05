@@ -2,25 +2,7 @@ import os
 import argparse
 from datasets import Dataset
 from transformers import AutoTokenizer
-from pollox.datagen_utils import get_docs_from_source
-
-
-def inspect_dataset(directory: str):
-    """Load and display information about the dataset."""
-    if not os.path.exists(directory):
-        print(f"Error: Dataset not found at {directory}")
-        return
-    
-    dataset = Dataset.load_from_disk(directory)
-    print("\nDataset Info:")
-    print(f"Number of examples: {len(dataset)}")
-    print(f"Columns: {dataset.column_names}")
-    print("\nFirst example:")
-    print(f"Text length: {len(dataset[0]['text'])} characters")
-    print(f"Input IDs length: {len(dataset[0]['input_ids'])} tokens")
-    print("\nFirst few tokens (as text):")
-    tokenizer = AutoTokenizer.from_pretrained("google/gemma-7b")
-    print(tokenizer.decode(dataset[0]['input_ids'][:20]))
+from pollox.datagen_utils import get_docs_from_source, inspect_dataset
 
 
 def generate_dataset():
