@@ -1,7 +1,4 @@
-# Polllux
-
-
-![image](https://github.com/user-attachments/assets/711bc44c-e544-442a-9fe5-de7ecb9a0a8c)
+# Polllux - Creating digital twins from synthetic data
 
 This is a repository for creating a digital twin of a person given their data, named after pollux of polux twinsthe immortal. To run the model, load the chrome-module packed extension in #chrome-extension. Given a user's writing, the training pipeline  generates synthetic data to train a chat model which can imitate the user's konwledfe and writing style. It comes with both a training pipeline for finetuning custom models, as well as a chrome extension to query the digital twin. 
 
@@ -12,6 +9,8 @@ This repository is organised as follows:
 - `chrome-extension/` - Directory for loading the chrome extension.
 
 To demonstrate out capability we trained a model off of the entire written corpus of Duncan McClements, a 19 year old economics prodigy whose work is already being used by the UK government. We’ve worked with Duncan extensively on economics research, so we know his output style and context. We also designed DuncanBench, a 10-question benchmark designed to see if the model answered questions in Duncan’s style and with his takes.
+
+![image](https://github.com/user-attachments/assets/711bc44c-e544-442a-9fe5-de7ecb9a0a8c)
 
 ## Results
 
