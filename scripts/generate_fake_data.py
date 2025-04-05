@@ -19,7 +19,7 @@ data = {
     "prompt": prompts,
     "completion": completions,
 }
-tokenizer = AutoTokenizer.from_pretrained("google/gemma-7b")
+ p
 
 # Create a Hugging Face dataset
 dataset = Dataset.from_dict(data)
