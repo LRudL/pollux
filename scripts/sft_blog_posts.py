@@ -107,10 +107,10 @@ def main(args: TrainingArgs):
     model, tokenizer, _ = get_model_tokenizer_config(args)
 
     train_dataset : Dataset = load_from_disk(args.dataset_path) # type: ignore
-    train_dataset.remove_columns(["input_ids","labels"])
     
     # If document_chunk_size is set, chunk the documents
     if args.document_chunk_size is not None:
+        train_dataset.remove_columns(["input_ids","labels"])
         logger.info(f"Chunking documents into chunks of {args.document_chunk_size} tokens")
         
         def chunk_documents(examples, tokenizer, chunk_size):
@@ -145,6 +145,10 @@ def main(args: TrainingArgs):
         logger.info(f"Dataset size after chunking: {len(train_dataset)} examples")
     
     train_dataset.set_format("torch")
+    if "text" not in train_dataset.column_names:
+        train_dataset = train_dataset.add_column(
+            "text", tokenizer.batch_decode(train_dataset["input_ids"])
+        )
 
     def train_wrapper():
         time_start = time.time()
